@@ -58,7 +58,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
-    <Compile Include="SymbolIconAdornmentTaggerProvider.cs" />
+    <Compile Include="ColorAdornmentTaggerProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">

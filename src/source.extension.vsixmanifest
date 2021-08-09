@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="CsInlineColorViz.6b864116-c092-4b7a-aad8-34239a7bbe70" Version="0.1" Language="en-US" Publisher="Matt Lacey" />
+        <Identity Id="CsInlineColorViz.6b864116-c092-4b7a-aad8-34239a7bbe70" Version="0.2" Language="en-US" Publisher="Matt Lacey" />
         <DisplayName>CsInlineColorViz</DisplayName>
         <Description>Empty VSIX Project.</Description>
         <Icon>Resources\Icon.png</Icon>
