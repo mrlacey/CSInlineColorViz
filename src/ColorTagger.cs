@@ -17,10 +17,28 @@ namespace CsInlineColorViz
             {
                 var value = match.Groups[3].Value;
 
-                // TODO: check that the group 1 match has a non-alphanumeric (or underscore) immediately before it.
-                if (ColorHelper.TryGetColor(value, out Color clr))
+                int matchPos;
+
+                if (spanStart > 0)
                 {
-                    return new ColorTag(clr);
+                    // looking at a span that is smaller than the whole document
+                    matchPos = snapshotText.IndexOf(match.Value, spanStart);
+                }
+                else
+                {
+                    matchPos = lineStart + match.Index;
+                }
+
+                if (matchPos >= 0)
+                {
+                    // Check that the group match has a non-alphanumeric immediately before it.
+                    if (!char.IsLetterOrDigit(snapshotText[matchPos - 1]))
+                    {
+                        if (ColorHelper.TryGetColor(value, out Color clr))
+                        {
+                            return new ColorTag(clr);
+                        }
+                    }
                 }
             }
 

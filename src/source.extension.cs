@@ -11,7 +11,7 @@ namespace CsInlineColorViz
         public const string Name = "CsInlineColorViz";
         public const string Description = @"Empty VSIX Project.";
         public const string Language = "en-US";
-        public const string Version = "0.1";
+        public const string Version = "0.3";
         public const string Author = "Matt Lacey";
         public const string Tags = "";
     }
