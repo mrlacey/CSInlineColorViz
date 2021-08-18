@@ -115,9 +115,8 @@ namespace CsInlineColorViz
                 {
                     ThreadHelper.JoinableTaskFactory.Run(async () =>
                     {
-#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
-                        await this.view.VisualElement.Dispatcher.BeginInvoke(new Action(this.AsyncUpdate));
-#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
+                        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        this.AsyncUpdate();
                     });
                 }
             }
