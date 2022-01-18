@@ -52,7 +52,7 @@ namespace CsInlineColorViz
                     continue;
                 }
 
-                SnapshotSpan adornmentSpan = new SnapshotSpan(linkTagSpans[0].Start, 0);
+                var adornmentSpan = new SnapshotSpan(linkTagSpans[0].Start, 0);
 
                 yield return Tuple.Create(adornmentSpan, (PositionAffinity?)PositionAffinity.Successor, dataTagSpan.Tag);
             }

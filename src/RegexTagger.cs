@@ -42,22 +42,22 @@ namespace CsInlineColorViz
             // Note that the spans argument can contain spans that are sub-spans of lines or intersect multiple lines.
             foreach (var (line, spanStart) in this.GetIntersectingLines(spans))
             {
-                string text = line.GetText();
+                string lineText = line.GetText();
 
                 foreach (var regex in this.matchExpressions)
                 {
-                    foreach (var match in regex.Matches(text).Cast<Match>())
+                    foreach (var match in regex.Matches(lineText).Cast<Match>())
                     {
                         if (snapshotText == null)
                         {
                             snapshotText = spans[0].Snapshot.GetText();
                         }
 
-                        T tag = this.TryCreateTagForMatch(match, line.Start.Position, spanStart, snapshotText);
+                        T tag = this.TryCreateTagForMatch(match, line.Start.Position, spanStart, lineText);
                         if (tag != null)
                         {
                             var afterEqualsPos = match.Value.IndexOf('=') + 1;
-                            SnapshotSpan span = new SnapshotSpan(line.Start + match.Index + afterEqualsPos, match.Length);
+                            var span = new SnapshotSpan(line.Start + match.Index + afterEqualsPos, match.Length);
                             yield return new TagSpan<T>(span, tag);
                         }
                     }
@@ -73,7 +73,7 @@ namespace CsInlineColorViz
         /// </summary>
         /// <param name="match">The match to create a tag for.</param>
         /// <returns>The tag to return from <see cref="GetTags"/>, if non-<c>null</c>.</returns>
-        protected abstract T TryCreateTagForMatch(Match match, int lineStart, int spanStart, string snapshotText);
+        protected abstract T TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText);
 
         /// <summary>
         /// Handle buffer changes. The default implementation expands changes to full lines and sends out
@@ -101,7 +101,7 @@ namespace CsInlineColorViz
             int start = args.Changes[0].NewPosition;
             int end = args.Changes[args.Changes.Count - 1].NewEnd;
 
-            SnapshotSpan totalAffectedSpan = new SnapshotSpan(
+            var totalAffectedSpan = new SnapshotSpan(
                 snapshot.GetLineFromPosition(start).Start,
                 snapshot.GetLineFromPosition(end).End);
 

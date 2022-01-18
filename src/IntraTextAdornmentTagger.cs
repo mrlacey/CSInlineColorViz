@@ -26,9 +26,7 @@ namespace CsInlineColorViz
         : ITagger<IntraTextAdornmentTag>
         where TAdornment : UIElement
     {
-#pragma warning disable SA1401 // Fields should be private - need access in inheritors
         protected readonly IWpfTextView view;
-#pragma warning restore SA1401 // Fields should be private
 
         private readonly List<SnapshotSpan> invalidatedSpans = new List<SnapshotSpan>();
 
@@ -113,11 +111,13 @@ namespace CsInlineColorViz
 
                 if (wasEmpty && this.invalidatedSpans.Count > 0)
                 {
+#pragma warning disable VSTHRD102 // Implement internal logic asynchronously
                     ThreadHelper.JoinableTaskFactory.Run(async () =>
                     {
                         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
                         this.AsyncUpdate();
                     });
+#pragma warning restore VSTHRD102 // Implement internal logic asynchronously
                 }
             }
         }

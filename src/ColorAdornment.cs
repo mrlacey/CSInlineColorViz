@@ -7,8 +7,10 @@ namespace CsInlineColorViz
         public ColorAdornment(ColorTag tag)
         {
             ClrTag = tag;
-            Height = 16;
-            Width = 16;
+            Height = 12;
+            Width = 12;
+            VerticalAlignment = System.Windows.VerticalAlignment.Center;
+            Margin = new System.Windows.Thickness(1, 1, 1, 4);
             SetBackground();
         }
 

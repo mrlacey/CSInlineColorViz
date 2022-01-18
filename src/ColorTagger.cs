@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 
@@ -11,33 +12,18 @@ namespace CsInlineColorViz
         {
         }
 
-        protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string snapshotText)
+        protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
         {
-            if (snapshotText.Contains(match.Value) && match.Groups.Count == 4)
+            if (lineText.Contains(match.Value) && match.Groups.Count == 4)
             {
                 var value = match.Groups[3].Value;
+                var precedingChar = match.Index > 0 ? lineText[match.Index - 1] : ' ';
 
-                int matchPos;
-
-                if (spanStart > 0)
+                if (new[] { ' ', ',', '(' }.Contains(precedingChar))
                 {
-                    // looking at a span that is smaller than the whole document
-                    matchPos = snapshotText.IndexOf(match.Value, spanStart);
-                }
-                else
-                {
-                    matchPos = lineStart + match.Index;
-                }
-
-                if (matchPos >= 0)
-                {
-                    // Check that the group match has a non-alphanumeric immediately before it.
-                    if (!char.IsLetterOrDigit(snapshotText[matchPos - 1]))
+                    if (ColorHelper.TryGetColor(value, out Color clr))
                     {
-                        if (ColorHelper.TryGetColor(value, out Color clr))
-                        {
-                            return new ColorTag(clr);
-                        }
+                        return new ColorTag(clr);
                     }
                 }
             }
