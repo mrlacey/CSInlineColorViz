@@ -10,7 +10,7 @@ namespace CsInlineColorViz
             Height = 12;
             Width = 12;
             VerticalAlignment = System.Windows.VerticalAlignment.Center;
-            Margin = new System.Windows.Thickness(1, 1, 1, 4);
+            Margin = new System.Windows.Thickness(1, 1, 1, 3);
             SetBackground();
         }
 

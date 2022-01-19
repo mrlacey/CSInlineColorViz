@@ -9,9 +9,9 @@ namespace CsInlineColorViz
     {
         public const string Id = "CsInlineColorViz.6b864116-c092-4b7a-aad8-34239a7bbe70";
         public const string Name = "CsInlineColorViz";
-        public const string Description = @"Empty VSIX Project.";
+        public const string Description = @"See samples of the colors you use within your C# code.  ";
         public const string Language = "en-US";
-        public const string Version = "0.3";
+        public const string Version = "1.0";
         public const string Author = "Matt Lacey";
         public const string Tags = "";
     }
