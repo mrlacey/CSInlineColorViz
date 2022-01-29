@@ -23,6 +23,64 @@ namespace CsInlineColorViz
             }
         }
 
+        public static bool TryGetArgbColor(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                var parts = args.Split(',');
+
+                if (parts.Length == 1)
+                {
+                    var sdcolor = System.Drawing.Color.FromArgb(int.Parse(parts[0]));
+                    color = Color.FromArgb(sdcolor.A, sdcolor.R, sdcolor.G, sdcolor.B);
+                }
+                else if (parts.Length == 3)
+                {
+                    var sdcolor = System.Drawing.Color.FromArgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
+                    color = Color.FromArgb(sdcolor.A, sdcolor.R, sdcolor.G, sdcolor.B);
+                }
+                else if (parts.Length == 4)
+                {
+                    color = Color.FromArgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]), byte.Parse(parts[3]));
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+        public static bool TryGetRgbColor(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                var parts = args.Split(',');
+
+                if (parts.Length == 3)
+                {
+                    color = Color.FromRgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
         public static string GetHexForNamedColor(string colorName)
         {
             switch (colorName?.ToLowerInvariant().Replace(" ", string.Empty) ?? string.Empty)

@@ -5,10 +5,10 @@ using System.Windows.Media;
 
 namespace CsInlineColorViz
 {
-    internal sealed class ColorTagger : RegexTagger<ColorTag>
+    internal sealed class ColorArgbTagger : RegexTagger<ColorTag>
     {
-        internal ColorTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+        internal ColorArgbTagger(ITextBuffer buffer)
+            : base(buffer, new[] { new Regex(@"(Color.FromArgb\()([0-9, ]{1,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
@@ -16,13 +16,13 @@ namespace CsInlineColorViz
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
             {
-                var value = match.Groups[3].Value;
+                var value = match.Groups[2].Value;
                 var precedingChar = match.Index > 0 ? lineText[match.Index - 1] : ' ';
 
                 // Do this check here rather than as part of the RegEx so don't have to adjust the insertion point for the adornment
                 if (new[] { ' ', ',', '(' }.Contains(precedingChar))
                 {
-                    if (ColorHelper.TryGetColor(value, out Color clr))
+                    if (ColorHelper.TryGetArgbColor(value, out Color clr))
                     {
                         return new ColorTag(clr);
                     }
