@@ -57,6 +57,7 @@ namespace CsInlineColorViz
                 return false;
             }
         }
+
         public static bool TryGetRgbColor(string args, out Color color)
         {
             color = default;
@@ -68,6 +69,28 @@ namespace CsInlineColorViz
                 if (parts.Length == 3)
                 {
                     color = Color.FromRgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetHexColor(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(args))
+                {
+                    color = (Color)ColorConverter.ConvertFromString(args);
                     return true;
                 }
                 else
