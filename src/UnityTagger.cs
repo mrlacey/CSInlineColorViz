@@ -4,10 +4,10 @@ using System.Windows.Media;
 
 namespace CsInlineColorViz
 {
-    internal sealed class HexStringTagger : RegexTagger<ColorTag>
+    internal sealed class UnityTagger : RegexTagger<ColorTag>
     {
-        internal HexStringTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex("(\"#)([0-9A-F]{3,8})(\")", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+        internal UnityTagger(ITextBuffer buffer)
+            : base(buffer, new[] { new Regex("(<Color=#)([0-9A-F]{3,8})(>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
