@@ -60,6 +60,8 @@
     <Compile Include="HexStringTagger.cs" />
     <Compile Include="HexStringTaggerProvider.cs" />
     <Compile Include="IntraTextAdornmentTagger.cs" />
+    <Compile Include="MauiProjTagger.cs" />
+    <Compile Include="MauiProjTaggerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexTagger.cs" />
     <Compile Include="source.extension.cs">
