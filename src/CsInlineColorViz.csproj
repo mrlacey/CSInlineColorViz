@@ -76,6 +76,7 @@
     <Compile Include="UnityTaggerProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="signvsix.targets" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
       <Generator>VsixManifestGenerator</Generator>
