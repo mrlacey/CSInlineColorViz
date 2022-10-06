@@ -148,6 +148,7 @@ namespace CsInlineColorViz
                 case "darkslategrey": return "#2F4F4F";
                 case "darkturquoise": return "#00CED1";
                 case "darkviolet": return "#9400D3";
+                case "darkyellow": return "#D7C32A";
                 case "deeppink": return "#FF1493";
                 case "deepskyblue": return "#00BFFF";
                 case "dimgray": return "#696969";
@@ -210,6 +211,7 @@ namespace CsInlineColorViz
                 case "moccasin": return "#FFE4B5";
                 case "navajowhite": return "#FFDEAD";
                 case "navy": return "#000080";
+                case "ochre": return "#D7C32A";
                 case "oldlace": return "#FDF5E6";
                 case "olive": return "#808000";
                 case "olivedrab": return "#6B8E23";
