@@ -49,6 +49,8 @@
     <Compile Include="ColorAdornmentTagger.cs" />
     <Compile Include="ColorArgbTagger.cs" />
     <Compile Include="ColorArgbTaggerProvider.cs" />
+    <Compile Include="ColorCtorTagger.cs" />
+    <Compile Include="ColorCtorTaggerProvider.cs" />
     <Compile Include="ColorHelper.cs" />
     <Compile Include="ColorRgbTagger.cs" />
     <Compile Include="ColorRgbTaggerProvider.cs" />
