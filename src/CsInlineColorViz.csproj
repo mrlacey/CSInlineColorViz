@@ -68,12 +68,12 @@
     <Compile Include="MauiProjTaggerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexTagger.cs" />
+    <Compile Include="ColorAdornmentTaggerProvider.cs" />
     <Compile Include="source.extension.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>source.extension.vsixmanifest</DependentUpon>
     </Compile>
-    <Compile Include="ColorAdornmentTaggerProvider.cs" />
     <Compile Include="SponsorDetector.cs" />
     <Compile Include="SponsorRequestHelper.cs" />
     <Compile Include="UnityTagger.cs" />
@@ -102,7 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Community.VisualStudio.Toolkit" Version="16.0.76.253-pre" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2119">
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2120">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

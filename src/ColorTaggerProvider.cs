@@ -8,6 +8,8 @@ namespace CsInlineColorViz
 {
     [Export(typeof(ITaggerProvider))]
     [ContentType("CSharp")]
+    [ContentType("Razor")]
+    [ContentType("LegacyRazorCSharp")]
     [TagType(typeof(ColorTag))]
     internal sealed class ColorTaggerProvider : ITaggerProvider
     {
