@@ -22,7 +22,7 @@ namespace CsInlineColorViz
                 var precedingChar = match.Index > 0 ? lineText[match.Index - 1] : ' ';
 
                 // Do this check here rather than as part of the RegEx so don't have to adjust the insertion point for the adornment
-                if (new[] { ' ', ',', '(' }.Contains(precedingChar))
+                if (new[] { ' ', ',', '(', '\t' }.Contains(precedingChar))
                 {
                     if (ColorHelper.TryGetColor(value, out Color clr))
                     {
