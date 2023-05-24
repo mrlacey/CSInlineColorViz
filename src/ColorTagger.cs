@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.Text;
-using Newtonsoft.Json.Linq;
+using System;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 
@@ -10,7 +9,7 @@ namespace CsInlineColorViz
     internal sealed class ColorTagger : RegexTagger<ColorTag>
     {
         internal ColorTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
@@ -24,6 +23,14 @@ namespace CsInlineColorViz
                 // Do this check here rather than as part of the RegEx so don't have to adjust the insertion point for the adornment
                 if (new[] { ' ', ',', '(', '\t' }.Contains(precedingChar))
                 {
+                    if (match.Groups[1].Value.EndsWith("KnownColor"))
+                    {
+                        if (Enum.TryParse(value, out System.Drawing.KnownColor knownColor))
+                        {
+                            value = ColorHelper.ToHex(System.Drawing.Color.FromKnownColor(knownColor));
+                        }
+                    }
+
                     if (ColorHelper.TryGetColor(value, out Color clr))
                     {
                         return new ColorTag(clr);

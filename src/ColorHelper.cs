@@ -23,6 +23,28 @@ namespace CsInlineColorViz
             }
         }
 
+        public static string ToHex(System.Drawing.Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
+
+        public static bool TryGetFromName(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                var sdc = ColorHelper.ToHex(System.Drawing.Color.FromName(args));
+
+                return TryGetColor(sdc, out color);
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
+
         public static bool TryGetArgbColor(string args, out Color color)
         {
             color = default;
