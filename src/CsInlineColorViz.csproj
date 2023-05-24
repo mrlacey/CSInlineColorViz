@@ -47,7 +47,9 @@
   <ItemGroup>
     <Compile Include="ColorAdornment.cs" />
     <Compile Include="ColorAdornmentTagger.cs" />
+    <Compile Include="ColorFromNameTagger.cs" />
     <Compile Include="ColorArgbTagger.cs" />
+    <Compile Include="ColorFromNameTaggerProvider.cs" />
     <Compile Include="ColorArgbTaggerProvider.cs" />
     <Compile Include="ColorCtorTagger.cs" />
     <Compile Include="ColorCtorTaggerProvider.cs" />
