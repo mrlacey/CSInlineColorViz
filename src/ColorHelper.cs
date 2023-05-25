@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System.Linq;
+using System.Windows.Media;
 
 namespace CsInlineColorViz
 {
@@ -53,23 +54,38 @@ namespace CsInlineColorViz
             {
                 var parts = args.Split(',');
 
-                if (parts.Length == 1)
+                var lastPart = parts.Last().Trim();
+
+                if (parts.Length == 2 && lastPart.StartsWith("Color."))
                 {
-                    var sdcolor = System.Drawing.Color.FromArgb(int.Parse(parts[0]));
-                    color = Color.FromArgb(sdcolor.A, sdcolor.R, sdcolor.G, sdcolor.B);
-                }
-                else if (parts.Length == 3)
-                {
-                    var sdcolor = System.Drawing.Color.FromArgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
-                    color = Color.FromArgb(sdcolor.A, sdcolor.R, sdcolor.G, sdcolor.B);
-                }
-                else if (parts.Length == 4)
-                {
-                    color = Color.FromArgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]), byte.Parse(parts[3]));
+                    if (TryGetFromName(lastPart.Substring(6), out Color innerColor))
+                    {
+                        color = Color.FromArgb(byte.Parse(parts[0]), innerColor.R, innerColor.G, innerColor.B);
+                        return true;
+                    }
+
+                    return false;
                 }
                 else
                 {
-                    return false;
+                    if (parts.Length == 1)
+                    {
+                        var sdcolor = System.Drawing.Color.FromArgb(int.Parse(parts[0]));
+                        color = Color.FromArgb(sdcolor.A, sdcolor.R, sdcolor.G, sdcolor.B);
+                    }
+                    else if (parts.Length == 3)
+                    {
+                        var sdcolor = System.Drawing.Color.FromArgb(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]));
+                        color = Color.FromArgb(sdcolor.A, sdcolor.R, sdcolor.G, sdcolor.B);
+                    }
+                    else if (parts.Length == 4)
+                    {
+                        color = Color.FromArgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]), byte.Parse(parts[3]));
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
 
                 return true;

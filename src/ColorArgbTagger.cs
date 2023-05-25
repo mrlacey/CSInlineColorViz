@@ -8,10 +8,11 @@ namespace CsInlineColorViz
     internal sealed class ColorArgbTagger : RegexTagger<ColorTag>
     {
         internal ColorArgbTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex(@"(Color.FromArgb\()([0-9, ]{1,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+            : base(buffer, new[] { new Regex(@"(System.Drawing.Color.FromArgb\(|Color.FromArgb\()([0-9, ]{1,}|[0-9, ]{2,}Color.[a-zA-Z]{3,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
+        // TODO: also support "System.Drawing.Color.FromArgb(255, Color.Red)"
         protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
