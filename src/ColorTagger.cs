@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.Text;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
@@ -13,6 +13,7 @@ namespace CsInlineColorViz
         {
         }
 
+        // TODO: Change this to return lineNumber, instead of lineStart and spanStart
         protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
@@ -33,7 +34,7 @@ namespace CsInlineColorViz
 
                     if (ColorHelper.TryGetColor(value, out Color clr))
                     {
-                        return new ColorTag(clr);
+                        return new ColorTag(clr, match, PopupType.NamedColors);
                     }
                     else
                     {

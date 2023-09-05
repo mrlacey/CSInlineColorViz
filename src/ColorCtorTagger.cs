@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
@@ -21,7 +21,7 @@ namespace CsInlineColorViz
 
                 try
                 {
-                    return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)));
+                    return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)), match, PopupType.None);
                 }
                 catch (System.Exception)
                 {

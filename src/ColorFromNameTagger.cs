@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.Text;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
@@ -24,7 +24,7 @@ namespace CsInlineColorViz
                 {
                     if (ColorHelper.TryGetFromName(value, out Color clr))
                     {
-                        return new ColorTag(clr);
+                        return new ColorTag(clr, match, PopupType.None);
                     }
                     else
                     {

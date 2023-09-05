@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
@@ -19,7 +19,7 @@ namespace CsInlineColorViz
 
                 if (ColorHelper.TryGetHexColor($"#{value}", out Color clr))
                 {
-                    return new ColorTag(clr);
+                    return new ColorTag(clr, match, PopupType.None);
                 }
                 else
                 {

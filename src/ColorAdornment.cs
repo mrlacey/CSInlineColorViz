@@ -1,16 +1,21 @@
 ﻿using System;
-using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace CsInlineColorViz
 {
     internal sealed class ColorAdornment : Border
     {
         private static readonly SolidColorBrush _borderColor = (SolidColorBrush)Application.Current.Resources[VsBrushes.CaptionTextKey];
+
+        Popup popup;
+
         public ColorAdornment(ColorTag tag)
         {
             ClrTag = tag;
@@ -23,6 +28,37 @@ namespace CsInlineColorViz
             VerticalAlignment = System.Windows.VerticalAlignment.Center;
             Margin = new System.Windows.Thickness(0, 0, 2, 3);
             SetBackground();
+
+            popup = new Popup();
+            //popup.StaysOpen = false;
+
+            var sp = new StackPanel();
+            sp.Background = new SolidColorBrush(Colors.White);
+            sp.Height = 70;
+            sp.Width = 100;
+
+            var border = new Border();
+            border.BorderBrush = _borderColor;
+            border.BorderThickness = new Thickness(1);
+            border.Padding = new Thickness(2);
+
+
+            sp.Children.Add(new TextBlock { Text = "color list goes here" });
+
+            border.Child = sp;
+            popup.Child = border;
+
+            this.Child = popup;
+
+            this.MouseLeftButtonDown += OnMouseLeftButtonDown;
+        }
+
+        private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2 && ClrTag.PopupType != PopupType.None)
+            {
+                popup.IsOpen = true;
+            }
         }
 
         public ColorTag ClrTag { get; private set; }

@@ -68,6 +68,7 @@
     <Compile Include="IntraTextAdornmentTagger.cs" />
     <Compile Include="MauiProjTagger.cs" />
     <Compile Include="MauiProjTaggerProvider.cs" />
+    <Compile Include="PopupType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexTagger.cs" />
     <Compile Include="ColorAdornmentTaggerProvider.cs" />
