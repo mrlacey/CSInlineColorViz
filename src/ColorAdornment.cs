@@ -29,9 +29,11 @@ namespace CsInlineColorViz
             Margin = new System.Windows.Thickness(0, 0, 2, 3);
             SetBackground();
 
+            // TODO need a fix for auto-closing the popup appropriately
             popup = new Popup();
             //popup.StaysOpen = false;
 
+            // TODO: move all this UI creatino logic somewhere separate
             var sp = new StackPanel();
             sp.Background = new SolidColorBrush(Colors.White);
             sp.Height = 70;
@@ -42,7 +44,8 @@ namespace CsInlineColorViz
             border.BorderThickness = new Thickness(1);
             border.Padding = new Thickness(2);
 
-
+            // TODO: Need to filter the type of picker
+            // TODO: need to limit the colors shown based on the class/enum where specified
             sp.Children.Add(new TextBlock { Text = "color list goes here" });
 
             border.Child = sp;
