@@ -60,7 +60,7 @@
     <Compile Include="ColorTagger.cs" />
     <Compile Include="ColorTaggerProvider.cs" />
     <Compile Include="CsInlineColorVizPackage.cs" />
-    <Compile Include="GeneralOutputPane.cs" />
+    <Compile Include="OutputPane.cs" />
     <Compile Include="HexIntTagger.cs" />
     <Compile Include="HexIntTaggerProvider.cs" />
     <Compile Include="HexStringTagger.cs" />

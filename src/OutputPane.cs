@@ -7,48 +7,48 @@ using Task = System.Threading.Tasks.Task;
 
 namespace CsInlineColorViz
 {
-    public class GeneralOutputPane
+    public class OutputPane
     {
-        private static GeneralOutputPane instance;
+        private static Guid csicvPaneGuid = new Guid("D5024E0F-63F2-431D-A68B-924CE419B8D3");
 
-        private readonly IVsOutputWindowPane generalPane;
+        private static OutputPane instance;
 
-        private GeneralOutputPane()
+        private readonly IVsOutputWindowPane pane;
+
+        private OutputPane()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var generalPaneGuid = VSConstants.GUID_OutWindowGeneralPane;
-
             if (ServiceProvider.GlobalProvider.GetService(typeof(SVsOutputWindow)) is IVsOutputWindow outWindow
-             && (ErrorHandler.Failed(outWindow.GetPane(ref generalPaneGuid, out generalPane)) || generalPane == null))
+             && (ErrorHandler.Failed(outWindow.GetPane(ref csicvPaneGuid, out pane)) || pane == null))
             {
-                if (ErrorHandler.Failed(outWindow.CreatePane(ref generalPaneGuid, "General", 1, 0)))
+                if (ErrorHandler.Failed(outWindow.CreatePane(ref csicvPaneGuid, Vsix.Name, 1, 0)))
                 {
                     System.Diagnostics.Debug.WriteLine("Failed to create the Output window pane.");
                     return;
                 }
 
-                if (ErrorHandler.Failed(outWindow.GetPane(ref generalPaneGuid, out generalPane)) || (generalPane == null))
+                if (ErrorHandler.Failed(outWindow.GetPane(ref csicvPaneGuid, out pane)) || (pane == null))
                 {
                     System.Diagnostics.Debug.WriteLine("Failed to get access to the Output window pane.");
                 }
             }
         }
 
-        public static GeneralOutputPane Instance => instance ??= new GeneralOutputPane();
+        public static OutputPane Instance => instance ??= new OutputPane();
 
         public async Task ActivateAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
 
-            generalPane?.Activate();
+            pane?.Activate();
         }
 
         public async Task WriteAsync(string message)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
 
-            _ = (generalPane?.OutputStringThreadSafe($"{message}{Environment.NewLine}"));
+            _ = (pane?.OutputStringThreadSafe($"{message}{Environment.NewLine}"));
         }
     }
 }
