@@ -1,15 +1,15 @@
-﻿using Microsoft.VisualStudio.Text;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
     internal sealed class ColorTagger : RegexTagger<ColorTag>
     {
         internal ColorTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
