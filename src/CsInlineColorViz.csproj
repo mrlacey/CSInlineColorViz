@@ -45,6 +45,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BaseOptionModel.cs" />
     <Compile Include="ColorAdornment.cs" />
     <Compile Include="ColorAdornmentTagger.cs" />
     <Compile Include="ColorFromNameTagger.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="ColorTagger.cs" />
     <Compile Include="ColorTaggerProvider.cs" />
     <Compile Include="CsInlineColorVizPackage.cs" />
+    <Compile Include="InternalOptions.cs" />
     <Compile Include="OutputPane.cs" />
     <Compile Include="HexIntTagger.cs" />
     <Compile Include="HexIntTaggerProvider.cs" />
@@ -103,13 +105,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Community.VisualStudio.Toolkit" Version="16.0.76.253-pre" ExcludeAssets="Runtime" />
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="17.4.2120">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
+    <PackageReference Include="Microsoft.VisualStudio.SDK">
+      <Version>17.8.37222</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.VSSDK.Vsixsigntool">
       <Version>16.2.29116.78</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.4</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

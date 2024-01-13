@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Windows.Controls;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace CsInlineColorViz
 {
@@ -49,8 +49,8 @@ namespace CsInlineColorViz
                 Guid guid = new("A27B4E24-A735-4d1d-B8E7-9716E1E3D8E0");
                 if (storage != null && storage.OpenCategory(ref guid, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) == VSConstants.S_OK)
                 {
-                    LOGFONTW[] Fnt = new LOGFONTW[] { new LOGFONTW() };
-                    FontInfo[] Info = new FontInfo[] { new FontInfo() };
+                    LOGFONTW[] Fnt = new LOGFONTW[] { new() };
+                    FontInfo[] Info = new FontInfo[] { new() };
                     storage.GetFont(Fnt, Info);
                     return Info[0].wPointSize;
                 }
