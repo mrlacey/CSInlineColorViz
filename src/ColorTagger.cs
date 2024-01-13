@@ -8,9 +8,12 @@ namespace CsInlineColorViz
 {
     internal sealed class ColorTagger : RegexTagger<ColorTag>
     {
+        private bool haveLoggedUseCount = false;
+
         internal ColorTagger(ITextBuffer buffer)
             : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
+
         }
 
         protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
@@ -33,6 +36,20 @@ namespace CsInlineColorViz
 
                     if (ColorHelper.TryGetColor(value, out Color clr))
                     {
+                        if (!haveLoggedUseCount)
+                        {
+                            // This Tagger is loaded oce per open document
+                            // Only record once per document regardless of how many times an adorner is created
+                            haveLoggedUseCount = true;
+
+                            _ = System.Threading.Tasks.Task.Run(async () =>
+                            {
+                                var settings = await InternalSettings.GetLiveInstanceAsync();
+                                settings.UseCount += 1;
+                                await settings.SaveAsync();
+                            });
+                        }
+
                         return new ColorTag(clr);
                     }
                     else
