@@ -12,7 +12,6 @@ namespace CsInlineColorViz
         {
         }
 
-        // TODO: also support "System.Drawing.Color.FromArgb(255, Color.Red)"
         protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
