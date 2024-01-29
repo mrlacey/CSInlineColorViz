@@ -16,7 +16,7 @@ namespace CsInlineColorViz
 
         }
 
-        // TODO: Change this to return lineNumber, instead of lineStart and spanStart
+        // TODO: Change this to return lineNumber, instead of lineStart and spanStart ????
         protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
@@ -51,7 +51,15 @@ namespace CsInlineColorViz
                             });
                         }
 
-                        return new ColorTag(clr, match, PopupType.NamedColors);
+                        // TODO: Need to handle all the different popup types to support
+                        if (match.Groups[1].Value.EndsWith(".Colors") || match.Groups[1].Value == "Colors")
+                        {
+                            return new ColorTag(clr, match, PopupType.NamedColors);
+                        }
+                        else
+                        {
+                            return new ColorTag(clr, match, PopupType.None);
+                        }
                     }
                     else
                     {
