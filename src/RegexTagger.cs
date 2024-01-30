@@ -48,10 +48,7 @@ namespace CsInlineColorViz
                 {
                     foreach (var match in regex.Matches(lineText).Cast<Match>())
                     {
-                        if (snapshotText == null)
-                        {
-                            snapshotText = spans[0].Snapshot.GetText();
-                        }
+                        snapshotText ??= spans[0].Snapshot.GetText();
 
                         T tag = this.TryCreateTagForMatch(match, line.Start.Position, spanStart, lineText);
                         if (tag != null)

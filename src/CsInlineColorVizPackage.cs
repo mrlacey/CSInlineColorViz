@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
@@ -12,12 +11,16 @@ namespace CsInlineColorViz
     [Guid(CsInlineColorVizPackage.PackageGuidString)]
     [InstalledProductRegistration(Vsix.Name, Vsix.Description, Vsix.Version)]
     [ProvideAutoLoad(UICONTEXT.CSharpProject_string, PackageAutoLoadFlags.BackgroundLoad)]
-    public sealed class CsInlineColorVizPackage: AsyncPackage
+    public sealed class CsInlineColorVizPackage : AsyncPackage
     {
         public const string PackageGuidString = "df7e1d03-27f6-44ba-875a-c9f732e6ad65";
 
+        public static AsyncPackage Instance { get; private set; }
+
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
+            Instance = this;
+
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
             await SponsorRequestHelper.CheckIfNeedToShowAsync();

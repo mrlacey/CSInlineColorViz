@@ -24,7 +24,8 @@ namespace CsInlineColorViz
                 {
                     if (ColorHelper.TryGetFromName(value, out Color clr))
                     {
-                        return new ColorTag(clr, match, PopupType.None);
+                        // TODO: Update this when have the line number
+                        return new ColorTag(clr, match, -1, lineStart, PopupType.None);
                     }
                     else
                     {

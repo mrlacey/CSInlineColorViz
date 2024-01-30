@@ -37,7 +37,9 @@ namespace CsInlineColorViz
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
         }
 
-        private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+#pragma warning disable VSTHRD100 // Avoid async void methods - It's from a button click!
+        private async void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+#pragma warning restore VSTHRD100 // Avoid async void methods
         {
             if (e.ClickCount == 2 && ClrTag.PopupType != PopupType.None)
             {
@@ -47,40 +49,31 @@ namespace CsInlineColorViz
 
                 if (dlgResult == true)
                 {
+                    // We always should be on the UI thread here as the user just clicked on the dialog.
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                    var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+
                     // TODO: update the color in the source from dlg.SelectedName
-                    // Need to edit the current document: replace the current name from the match, with the new name.
-                    // TODO: investigate if need to pass the document reference to the adornment so can get it here, or if need to look at a different approach.
-
-                    ThreadHelper.JoinableTaskFactory.Run(async () =>
+                    if (dte.ActiveDocument.Object("TextDocument") is EnvDTE.TextDocument txtDoc)
                     {
-                        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                        var find = ClrTag.Match.Groups[0].Value;
+                        var replace = $"{ClrTag.Match.Groups[1].Value}{ClrTag.Match.Groups[2].Value}{dlg.SelectedName}";
+                        var matches = TextDocumentHelper.FindMatches(txtDoc, find);
 
-                        var dte = (DTE)Package.GetGlobalService(typeof(DTE));
-
-                        if (dte.ActiveDocument.Object("TextDocument") is EnvDTE.TextDocument txtDoc)
+                        foreach (var matchPoint in matches)
                         {
-                            //if (TryGetTextBufferAt(textDocument.Parent.FullName, out ITextBuffer textBuffer))
-                            {
-                                //var matches = TextDocumentHelper.FindMatches(txtDoc, ClrTag.Match.Groups);
-
-                                //foreach (var matchPoint in matches)
-                                //{
-                                //    if (matchPoint.Line == lineNumber)
-                                //    {
-                                //        if (!TextDocumentHelper.MakeReplacements(txtDoc, matchPoint, find, replace))
-                                //        {
-                                //            System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {lineNumber}.");
-                                //        }
-
-                                //        break;
-                                //    }
-                                //}
-
-                                //IFinder finder = GetFinder(patternString, replacementString, textBuffer);
-                                //result = ReplaceAll(textBuffer, finder.FindForReplaceAll(GetSnapshotSpanForExtent(textBuffer.CurrentSnapshot, startPoint, patternString.Length)));
-                            }
+                            // TODO: Check line and offset with ClrTag (in case of multiple matches)
+                            //    if (matchPoint.Line == lineNumber)
+                            //    {
+                            //        if (!TextDocumentHelper.MakeReplacements(txtDoc, matchPoint, find, replace))
+                            //        {
+                            // TODO: Log any issues to the output pane, not the debug window
+                            //            System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {lineNumber}.");
+                            //        }
+                            //    }
                         }
-                    });
+                    }
                 }
             }
         }
@@ -183,13 +176,15 @@ namespace CsInlineColorViz
         {
             var componentModel = (IComponentModel)Package.GetGlobalService(typeof(SComponentModel));
 
-            if (VsShellUtilities.IsDocumentOpen(
-              CsInlineColorVizPackage.Instance,
-              filePath,
-              Guid.Empty,
-              out var _,
-              out var _,
-              out IVsWindowFrame windowFrame))
+            // TODO: need to force package load to ensure this continues
+            if (CsInlineColorVizPackage.Instance is not null
+                && VsShellUtilities.IsDocumentOpen(
+                      CsInlineColorVizPackage.Instance,
+                      filePath,
+                      Guid.Empty,
+                      out var _,
+                      out var _,
+                      out IVsWindowFrame windowFrame))
             {
                 IVsTextView view = VsShellUtilities.GetTextView(windowFrame);
 
@@ -257,9 +252,11 @@ namespace CsInlineColorViz
             {
                 if (ColorHelper.TryGetFromName(color.Name, out Color clr))
                 {
-                    var cbtn = new Button();
-                    cbtn.Content = color.Name;
-                    cbtn.Background = new SolidColorBrush(clr);
+                    var cbtn = new Button
+                    {
+                        Content = color.Name,
+                        Background = new SolidColorBrush(clr),
+                    };
                     cbtn.Click += (s, e) => { SelectedName = color.Name; this.DialogResult = true; };
                     sp2.Children.Add(cbtn);
                 }
