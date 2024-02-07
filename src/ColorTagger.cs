@@ -17,7 +17,7 @@ namespace CsInlineColorViz
         }
 
         // TODO: Also include the line number here
-        protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
+        protected override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
             {
@@ -54,13 +54,11 @@ namespace CsInlineColorViz
                         // TODO: Need to handle all the different popup types to support
                         if (match.Groups[1].Value.EndsWith(".Colors") || match.Groups[1].Value == "Colors" || match.Groups[1].Value == "Color")
                         {
-                            // TODO: Update this when have the line number
-                            return new ColorTag(clr, match, -1, lineStart, PopupType.NamedColors);
+                            return new ColorTag(clr, match, lineNumber, lineStart, PopupType.NamedColors);
                         }
                         else
                         {
-                            // TODO: Update this when have the line number
-                            return new ColorTag(clr, match, -1, lineStart, PopupType.None);
+                            return new ColorTag(clr, match, lineNumber, lineStart, PopupType.None);
                         }
                     }
                     else

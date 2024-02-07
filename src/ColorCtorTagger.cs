@@ -11,7 +11,7 @@ namespace CsInlineColorViz
         {
         }
 
-        protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
+        protected override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 8)
             {
@@ -22,7 +22,7 @@ namespace CsInlineColorViz
                 try
                 {
                     // TODO: Update this when have the line number
-                    return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)), match, -1, lineStart, PopupType.None);
+                    return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)), match, lineNumber, lineStart, PopupType.None);
                 }
                 catch (System.Exception)
                 {

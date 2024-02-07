@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -52,6 +54,18 @@ namespace CsInlineColorViz
                     // We always should be on the UI thread here as the user just clicked on the dialog.
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
+                    // TODO: move this check somewhere sensible (the package?)
+                    if (CsInlineColorVizPackage.Instance == null)
+                    {
+                        // Try and force load the project if it hasn't already loaded
+                        // so can access the configured options.
+                        if (ServiceProvider.GlobalProvider.GetService(typeof(SVsShell)) is IVsShell shell)
+                        {
+                            Guid PackageToBeLoadedGuid = new Guid(CsInlineColorVizPackage.PackageGuidString);
+                            shell.LoadPackage(ref PackageToBeLoadedGuid, out _);
+                        }
+                    }
+
                     var dte = (DTE)Package.GetGlobalService(typeof(DTE));
 
                     // TODO: update the color in the source from dlg.SelectedName
@@ -59,19 +73,23 @@ namespace CsInlineColorViz
                     {
                         var find = ClrTag.Match.Groups[0].Value;
                         var replace = $"{ClrTag.Match.Groups[1].Value}{ClrTag.Match.Groups[2].Value}{dlg.SelectedName}";
-                        var matches = TextDocumentHelper.FindMatches(txtDoc, find);
+                        var matches = await TextDocumentHelper.FindMatches(txtDoc, find);
 
+                        // TODO: need to create better undo stack entries
                         foreach (var matchPoint in matches)
                         {
-                            // TODO: Check line and offset with ClrTag (in case of multiple matches)
-                            //    if (matchPoint.Line == lineNumber)
-                            //    {
-                            //        if (!TextDocumentHelper.MakeReplacements(txtDoc, matchPoint, find, replace))
-                            //        {
-                            // TODO: Log any issues to the output pane, not the debug window
-                            //            System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {lineNumber}.");
-                            //        }
-                            //    }
+                            // TODO: Need to account for the line number in the tag not having been updated even if the line has changed
+                            // Add one to the line number as the EditPoint is 1-based
+                            if (matchPoint.Line == ClrTag.LineNumber + 1)
+                            {
+                                var replacementMade = await TextDocumentHelper.MakeReplacements(txtDoc, matchPoint, find, replace);
+
+                                if (!replacementMade)
+                                {
+                                    //   TODO: Log any issues to the output pane, not the debug window
+                                    System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {ClrTag.LineNumber}.");
+                                }
+                            }
                         }
                     }
                 }
@@ -127,26 +145,38 @@ namespace CsInlineColorViz
         /// <param name="textDocument">The text document.</param>
         /// <param name="patternString">The pattern string.</param>
         /// <returns>The set of matches.</returns>
-        internal static IEnumerable<EditPoint> FindMatches(TextDocument textDocument, string patternString)
+        internal static async Task<IEnumerable<EditPoint>> FindMatches(TextDocument textDocument, string patternString)
         {
             var matches = new List<EditPoint>();
 
-            ThreadHelper.JoinableTaskFactory.Run(async () =>
-            {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                if (TryGetTextBufferAt(textDocument.Parent.FullName, out ITextBuffer textBuffer))
+            if (TryGetTextBufferAt(textDocument.Parent.FullName, out ITextBuffer textBuffer))
+            {
+                IFinder finder = GetFinder(patternString, textBuffer);
+                var findMatches = finder.FindAll();
+                foreach (var match in findMatches)
                 {
-                    IFinder finder = GetFinder(patternString, textBuffer);
-                    var findMatches = finder.FindAll();
-                    foreach (var match in findMatches)
-                    {
-                        matches.Add(GetEditPointForSnapshotPosition(textDocument, textBuffer.CurrentSnapshot, match.Start));
-                    }
+                    matches.Add(GetEditPointForSnapshotPosition(textDocument, textBuffer.CurrentSnapshot, match.Start));
                 }
-            });
+            }
 
             return matches;
+        }
+
+        internal static async Task<bool> MakeReplacements(TextDocument textDocument, EditPoint startPoint, string patternString, string replacementString)
+        {
+            var result = false;
+
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (TryGetTextBufferAt(textDocument.Parent.FullName, out ITextBuffer textBuffer))
+            {
+                IFinder finder = GetFinder(patternString, replacementString, textBuffer);
+                result = ReplaceAll(textBuffer, finder.FindForReplaceAll(GetSnapshotSpanForExtent(textBuffer.CurrentSnapshot, startPoint, patternString.Length)));
+            }
+
+            return result;
         }
 
         private static IFindService GetFindService()
@@ -162,6 +192,12 @@ namespace CsInlineColorViz
             return finderFactory.Create(textBuffer.CurrentSnapshot);
         }
 
+        private static IFinder GetFinder(string findWhat, string replaceWith, ITextBuffer textBuffer)
+        {
+            var finderFactory = GetFindService().CreateFinderFactory(findWhat, replaceWith, StandardFindOptions);
+            return finderFactory.Create(textBuffer.CurrentSnapshot);
+        }
+
         private static EditPoint GetEditPointForSnapshotPosition(TextDocument textDocument, ITextSnapshot textSnapshot, int position)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -170,6 +206,51 @@ namespace CsInlineColorViz
             var textSnapshotLine = textSnapshot.GetLineFromPosition(position);
             editPoint.MoveToLineAndOffset(textSnapshotLine.LineNumber + 1, position - textSnapshotLine.Start.Position + 1);
             return editPoint;
+        }
+
+        private static Span GetSnapshotSpanForExtent(ITextSnapshot textSnapshot, EditPoint startPoint, int length)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var startPosition = GetSnapshotPositionForTextPoint(textSnapshot, startPoint);
+            var endPosition = startPosition + length;
+
+            if (startPosition <= endPosition)
+            {
+                return new Span(startPosition, endPosition - startPosition);
+            }
+            else
+            {
+                return new Span(endPosition, startPosition - endPosition);
+            }
+        }
+
+        private static int GetSnapshotPositionForTextPoint(ITextSnapshot textSnapshot, TextPoint textPoint)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var textSnapshotLine = textSnapshot.GetLineFromLineNumber(textPoint.Line - 1);
+            return textSnapshotLine.Start.Position + textPoint.LineCharOffset - 1;
+        }
+
+
+        private static bool ReplaceAll(ITextBuffer textBuffer, IEnumerable<FinderReplacement> replacements)
+        {
+            var result = false;
+
+            if (replacements.Any())
+            {
+                using var edit = textBuffer.CreateEdit();
+                foreach (var match in replacements)
+                {
+                    result = true;
+                    edit.Replace(match.Match, match.Replace);
+                }
+
+                edit.Apply();
+            }
+
+            return result;
         }
 
         private static bool TryGetTextBufferAt(string filePath, out ITextBuffer textBuffer)
