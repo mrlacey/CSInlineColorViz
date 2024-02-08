@@ -164,7 +164,9 @@ namespace CsInlineColorViz
                     var cbtn = new Button
                     {
                         Content = color.Name,
+                        //Content = new OutlineTextControl() { Text = color.Name, Fill = new SolidColorBrush(Colors.Black), Stroke = new SolidColorBrush(Colors.White), StrokeThickness = 1, FontSize = 12 },
                         Background = new SolidColorBrush(clr),
+                        //Height = 20,
                     };
                     cbtn.Click += (s, e) => { SelectedName = color.Name; this.DialogResult = true; };
                     sp2.Children.Add(cbtn);

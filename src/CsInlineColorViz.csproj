@@ -62,6 +62,7 @@
     <Compile Include="ColorTaggerProvider.cs" />
     <Compile Include="CsInlineColorVizPackage.cs" />
     <Compile Include="InternalSettings.cs" />
+    <Compile Include="OutlineTextControl.cs" />
     <Compile Include="OutputPane.cs" />
     <Compile Include="HexIntTagger.cs" />
     <Compile Include="HexIntTaggerProvider.cs" />
@@ -81,6 +82,7 @@
     </Compile>
     <Compile Include="SponsorDetector.cs" />
     <Compile Include="SponsorRequestHelper.cs" />
+    <Compile Include="TextDocumentHelper.cs" />
     <Compile Include="UnityTagger.cs" />
     <Compile Include="UnityTaggerProvider.cs" />
   </ItemGroup>
