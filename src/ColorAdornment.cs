@@ -54,21 +54,10 @@ namespace CsInlineColorViz
                     // We always should be on the UI thread here as the user just clicked on the dialog.
                     await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                    // TODO: move this check somewhere sensible (the package?)
-                    if (CsInlineColorVizPackage.Instance == null)
-                    {
-                        // Try and force load the project if it hasn't already loaded
-                        // so can access the configured options.
-                        if (ServiceProvider.GlobalProvider.GetService(typeof(SVsShell)) is IVsShell shell)
-                        {
-                            Guid PackageToBeLoadedGuid = new Guid(CsInlineColorVizPackage.PackageGuidString);
-                            shell.LoadPackage(ref PackageToBeLoadedGuid, out _);
-                        }
-                    }
+                    await CsInlineColorVizPackage.EnsureInstanceLoadedAsync();
 
                     var dte = (DTE)Package.GetGlobalService(typeof(DTE));
 
-                    // TODO: update the color in the source from dlg.SelectedName
                     if (dte.ActiveDocument.Object("TextDocument") is EnvDTE.TextDocument txtDoc)
                     {
                         var find = ClrTag.Match.Groups[0].Value;

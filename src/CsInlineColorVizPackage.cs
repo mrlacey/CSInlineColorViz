@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using static Microsoft.VisualStudio.VSConstants;
 using Task = System.Threading.Tasks.Task;
 
@@ -26,6 +27,22 @@ namespace CsInlineColorViz
             await SponsorRequestHelper.CheckIfNeedToShowAsync();
 
             await base.InitializeAsync(cancellationToken, progress);
+        }
+
+        internal static async Task EnsureInstanceLoadedAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+            if (CsInlineColorVizPackage.Instance == null)
+            {
+                // Try and force load the project if it hasn't already loaded
+                // so can access the configured options.
+                if (ServiceProvider.GlobalProvider.GetService(typeof(SVsShell)) is IVsShell shell)
+                {
+                    Guid PackageToBeLoadedGuid = new Guid(CsInlineColorVizPackage.PackageGuidString);
+                    shell.LoadPackage(ref PackageToBeLoadedGuid, out _);
+                }
+            }
         }
     }
 }
