@@ -12,11 +12,10 @@ namespace CsInlineColorViz
 
         // TODO: Add support for System.Drawing.SystemColors and System.Windows.SystemColors?
         internal ColorTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+            : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors|SystemColors|System.Drawing.SystemColors|System.Windows.SystemColors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
-        // TODO: Also include the line number here
         protected override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 4)
@@ -52,9 +51,21 @@ namespace CsInlineColorViz
                         }
 
                         // TODO: Need to handle all the different popup types to support
-                        if (match.Groups[1].Value.EndsWith(".Colors") || match.Groups[1].Value == "Colors" || match.Groups[1].Value == "Color")
+                        if (match.Groups[1].Value.EndsWith(".Colors") || match.Groups[1].Value.EndsWith(".Color") || match.Groups[1].Value == "Colors" || match.Groups[1].Value == "Color")
                         {
                             return new ColorTag(clr, match, lineNumber, lineStart, PopupType.NamedColors);
+                        }
+                        else if (match.Groups[1].Value.EndsWith("ConsoleColor"))
+                        {
+                            return new ColorTag(clr, match, lineNumber, lineStart, PopupType.ConsoleColors);
+                        }
+                        else if (match.Groups[1].Value.EndsWith("KnownColor"))
+                        {
+                            return new ColorTag(clr, match, lineNumber, lineStart, PopupType.KnownColors);
+                        }
+                        else if (match.Groups[1].Value.EndsWith("SystemColors"))
+                        {
+                            return new ColorTag(clr, match, lineNumber, lineStart, PopupType.SystemColors);
                         }
                         else
                         {

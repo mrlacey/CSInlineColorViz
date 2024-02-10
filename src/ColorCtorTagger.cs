@@ -21,7 +21,6 @@ namespace CsInlineColorViz
 
                 try
                 {
-                    // TODO: Update this when have the line number
                     return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)), match, lineNumber, lineStart, PopupType.None);
                 }
                 catch (System.Exception)

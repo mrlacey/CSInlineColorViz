@@ -4,5 +4,8 @@
     {
         None,
         NamedColors,
+        ConsoleColors,
+        KnownColors,
+        SystemColors,
     }
 }

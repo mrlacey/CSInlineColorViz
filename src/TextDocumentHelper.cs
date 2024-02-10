@@ -138,7 +138,6 @@ namespace CsInlineColorViz
         {
             var componentModel = (IComponentModel)Package.GetGlobalService(typeof(SComponentModel));
 
-            // TODO: need to force package load to ensure this continues
             if (CsInlineColorVizPackage.Instance is not null
                 && VsShellUtilities.IsDocumentOpen(
                       CsInlineColorVizPackage.Instance,

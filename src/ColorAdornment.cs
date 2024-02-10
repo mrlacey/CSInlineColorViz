@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -31,14 +32,26 @@ namespace CsInlineColorViz
             this.MouseLeftButtonDown += OnMouseLeftButtonDown;
         }
 
+        private ColorSelectionDialog CreateDialogForPopupType(PopupType popupType)
+            => popupType switch
+            {
+                PopupType.NamedColors => new NamedColorDialog(),
+                PopupType.ConsoleColors => new ConsoleColorDialog(),
+                PopupType.KnownColors => new KnownColorDialog(),
+                PopupType.SystemColors => new SystemColorsDialog(),
+                _ => throw new NotImplementedException(),
+            };
+
 #pragma warning disable VSTHRD100 // Avoid async void methods - It's from a button click!
         private async void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 #pragma warning restore VSTHRD100 // Avoid async void methods
         {
+            // TODO: for preview releases only make this available to sponsors
+            //if (await SponsorDetector.IsSponsorAsync())
+
             if (e.ClickCount == 2 && ClrTag.PopupType != PopupType.None)
             {
-                // TODO: need to tell the dialog which color options to show
-                var dlg = new NamedColorDialog();
+                var dlg = CreateDialogForPopupType(ClrTag.PopupType);
                 var dlgResult = dlg.ShowModal();
 
                 if (dlgResult == true)
@@ -56,7 +69,11 @@ namespace CsInlineColorViz
                         var replace = $"{ClrTag.Match.Groups[1].Value}{ClrTag.Match.Groups[2].Value}{dlg.SelectedName}";
                         var matches = await TextDocumentHelper.FindMatches(txtDoc, find);
 
-                        // TODO: need to create better undo stack entries
+                        if (!dte.UndoContext.IsOpen)
+                        {
+                            dte.UndoContext.Open($"Changing color to: {replace}");
+                        }
+
                         foreach (var matchPoint in matches)
                         {
                             // TODO: Need to account for the line number in the tag not having been updated even if the line has changed
@@ -72,6 +89,8 @@ namespace CsInlineColorViz
                                 }
                             }
                         }
+
+                        dte.UndoContext.Close();
                     }
                 }
             }
@@ -113,12 +132,11 @@ namespace CsInlineColorViz
         }
     }
 
-    class NamedColorDialog : DialogWindow
+    class ColorSelectionDialog : DialogWindow
     {
         public string SelectedName { get; set; }
 
-        // TODO: Need to differentiate between Color, ConsoleColor and KnownColor
-        public NamedColorDialog()
+        public ColorSelectionDialog()
         {
             this.HasMaximizeButton = false;
             this.HasMinimizeButton = false;
@@ -127,26 +145,37 @@ namespace CsInlineColorViz
             this.Height = 400;
             this.MinHeight = 200;
             this.MinWidth = 200;
+        }
 
+        internal Button CreateButton(string name, System.Windows.Media.Color clr)
+        {
+            var cbtn = new Button
+            {
+                Content = name,
+                Background = new SolidColorBrush(clr),
+                Height = 30,
+            };
+            cbtn.Click += (s, e) => { SelectedName = name; this.DialogResult = true; };
+            return cbtn;
+        }
+
+    }
+
+    class NamedColorDialog : ColorSelectionDialog
+    {
+        public NamedColorDialog() : base()
+        {
             var tabs = new TabControl();
 
             var tab1 = new TabItem { Header = "  A-Z  " };
 
             var sp = new StackPanel();
 
-            //foreach (var color in Enum.GetValues(typeof(System.ConsoleColor)))
-            //foreach (var color in Enum.GetValues(typeof(System.Drawing.KnownColor)))
             foreach (var color in ColorHelper.SystemDrawingColorsAlphabetical())
             {
-                //if (ColorHelper.TryGetFromName(color.ToString(), out Color clr))
-                if (ColorHelper.TryGetFromName(color.Name, out Color clr))
+                if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
                 {
-                    var cbtn = new Button();
-                    //cbtn.Content = color.ToString();
-                    cbtn.Content = color.Name;
-                    cbtn.Background = new SolidColorBrush(clr);
-                    cbtn.Click += (s, e) => { SelectedName = color.Name; this.DialogResult = true; };
-                    sp.Children.Add(cbtn);
+                    sp.Children.Add(CreateButton(color.Name, clr));
                 }
             }
 
@@ -159,17 +188,9 @@ namespace CsInlineColorViz
 
             foreach (var color in ColorHelper.SystemDrawingColorsSpectrum())
             {
-                if (ColorHelper.TryGetFromName(color.Name, out Color clr))
+                if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
                 {
-                    var cbtn = new Button
-                    {
-                        Content = color.Name,
-                        //Content = new OutlineTextControl() { Text = color.Name, Fill = new SolidColorBrush(Colors.Black), Stroke = new SolidColorBrush(Colors.White), StrokeThickness = 1, FontSize = 12 },
-                        Background = new SolidColorBrush(clr),
-                        //Height = 20,
-                    };
-                    cbtn.Click += (s, e) => { SelectedName = color.Name; this.DialogResult = true; };
-                    sp2.Children.Add(cbtn);
+                    sp2.Children.Add(CreateButton(color.Name, clr));
                 }
             }
 
@@ -179,17 +200,69 @@ namespace CsInlineColorViz
             tabs.Items.Add(tab1);
             tabs.Items.Add(tab2);
 
-            // TODO: need to distinguish the currently selected option
-            // - duplicate at the top?
-            // - highlight the selected?
-            // - scroll into view?
-
-            // TODO: need a cancel button?
-            //var btn = new Button { Content = "Cancel", Margin = new Thickness(8) };
-            //btn.Click += (s, e) => this.DialogResult = false;
-            //sp.Children.Add(btn);
-
             this.Content = tabs;
+        }
+    }
+    class KnownColorDialog : ColorSelectionDialog
+    {
+        public KnownColorDialog() : base()
+        {
+            var sp = new StackPanel();
+
+            // TODO: consider separating "colors" and interpreted system values
+            //foreach (var color in Enum.GetValues(typeof(System.Drawing.KnownColor)))
+            foreach (var colorName in Enum.GetValues(typeof(System.Drawing.KnownColor)).Cast<object>().ToList().OrderBy(o => o.ToString()).Select(o => o.ToString()))
+            {
+                //if (ColorHelper.TryGetColor(color.ToString(), out System.Windows.Media.Color clr))
+                if (ColorHelper.TryGetColor(colorName, out System.Windows.Media.Color clr))
+                {
+                    //sp.Children.Add(CreateButton(color.ToString(), clr));
+                    sp.Children.Add(CreateButton(colorName, clr));
+                }
+            }
+
+            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
+
+            this.Content = sv;
+        }
+    }
+    // TODO: if the value returend from here is replacing a string that ends with "Color", this needs to be appended on the replacemen too.
+    class SystemColorsDialog : ColorSelectionDialog
+    {
+        public SystemColorsDialog() : base()
+        {
+            var sp = new StackPanel();
+
+            foreach (var color in ColorHelper.SystemColorsAlphabetically())
+            {
+                if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
+                {
+                    sp.Children.Add(CreateButton(color.Name, clr));
+                }
+            }
+
+            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
+
+            this.Content = sv;
+        }
+    }
+    class ConsoleColorDialog : ColorSelectionDialog
+    {
+        public ConsoleColorDialog() : base()
+        {
+            var sp = new StackPanel();
+
+            foreach (var colorName in ColorHelper.ConsoleColorsNamesAlphabetical())
+            {
+                if (ColorHelper.TryGetColor(colorName, out System.Windows.Media.Color clr))
+                {
+                    sp.Children.Add(CreateButton(colorName, clr));
+                }
+            }
+
+            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
+
+            this.Content = sv;
         }
     }
 }

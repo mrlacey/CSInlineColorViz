@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 
@@ -15,6 +16,22 @@ namespace CsInlineColorViz
                     colorName = GetHexForNamedColor(colorName.Trim());
                 }
 
+                // If still don't have a hex value, then try to parse it as a known color (SystemColor)
+                if (!colorName?.TrimStart().StartsWith("#") ?? false)
+                {
+                    // The System.Windows versions of SystemColors end with "Color" (but the System.Drawing versions don't)
+                    if (colorName.EndsWith("Color"))
+                    {
+                        colorName = colorName.Substring(0, colorName.Length - 5);
+                    }
+
+                    if (Enum.TryParse(colorName, out System.Drawing.KnownColor knownColor))
+                    {
+                        colorName = ColorHelper.ToHex(System.Drawing.Color.FromKnownColor(knownColor));
+                    }
+                }
+
+                // By here, colorName should be a hex value
                 color = (Color)ColorConverter.ConvertFromString(colorName.Trim());
                 return true;
             }
@@ -305,6 +322,67 @@ namespace CsInlineColorViz
             }
         }
 
+        // Note that SystemColors are KnownColors
+        // Also note that System.Windows.SystemColors are the same as Systmem.Drawing.SystemColors, but with "Color" on the end
+        public static IEnumerable<System.Drawing.Color> SystemColorsAlphabetically()
+        {
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ActiveBorder);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ActiveCaption);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ActiveCaptionText);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.AppWorkspace);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ButtonFace);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ButtonHighlight);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ButtonShadow);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Control);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ControlDark);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ControlDarkDark);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ControlLight);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ControlLightLight);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ControlText);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Desktop);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.GradientActiveCaption);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.GradientInactiveCaption);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Highlight);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.HighlightText);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.HotTrack);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.InactiveBorder);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.InactiveCaption);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.InactiveCaptionText);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Info);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.InfoText);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Menu);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.MenuBar);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.MenuHighlight);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.MenuText);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ScrollBar);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.Window);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.WindowFrame);
+            yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.WindowText);
+        }
+
+        // TODO: might be nice to add a test that this produces the same as 
+        // Enum.GetValues(typeof(System.ConsoleColor)).Cast<object>().ToList().OrderBy(o => o.ToString()).Select(o => o.ToString())
+        // In theory hardcoding this list save work at runtime.
+        public static IEnumerable<string> ConsoleColorsNamesAlphabetical()
+        {
+            yield return nameof(System.ConsoleColor.Black);
+            yield return nameof(System.ConsoleColor.Blue);
+            yield return nameof(System.ConsoleColor.Cyan);
+            yield return nameof(System.ConsoleColor.DarkBlue);
+            yield return nameof(System.ConsoleColor.DarkCyan);
+            yield return nameof(System.ConsoleColor.DarkGray);
+            yield return nameof(System.ConsoleColor.DarkGreen);
+            yield return nameof(System.ConsoleColor.DarkMagenta);
+            yield return nameof(System.ConsoleColor.DarkRed);
+            yield return nameof(System.ConsoleColor.DarkYellow);
+            yield return nameof(System.ConsoleColor.Gray);
+            yield return nameof(System.ConsoleColor.Green);
+            yield return nameof(System.ConsoleColor.Magenta);
+            yield return nameof(System.ConsoleColor.Red);
+            yield return nameof(System.ConsoleColor.White);
+            yield return nameof(System.ConsoleColor.Yellow);
+        }
+
         public static IEnumerable<System.Drawing.Color> SystemDrawingColorsAlphabetical()
         {
             yield return System.Drawing.Color.AliceBlue;
@@ -456,8 +534,6 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.SaddleBrown;
             yield return System.Drawing.Color.DarkRed;
             yield return System.Drawing.Color.Maroon;
-            yield return System.Drawing.Color.Purple;
-            yield return System.Drawing.Color.DarkMagenta;
             yield return System.Drawing.Color.Brown;
             yield return System.Drawing.Color.Firebrick;
             yield return System.Drawing.Color.Crimson;
@@ -483,6 +559,7 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.Beige;
             yield return System.Drawing.Color.Cornsilk;
             yield return System.Drawing.Color.OldLace;
+            yield return System.Drawing.Color.Linen;
             yield return System.Drawing.Color.Honeydew;
             yield return System.Drawing.Color.LightYellow;
             yield return System.Drawing.Color.LemonChiffon;
@@ -498,20 +575,20 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.Gold;
             yield return System.Drawing.Color.Yellow;
             yield return System.Drawing.Color.GreenYellow;
-            yield return System.Drawing.Color.PaleGreen;
+            yield return System.Drawing.Color.YellowGreen;
             yield return System.Drawing.Color.Chartreuse;
             yield return System.Drawing.Color.LawnGreen;
+            yield return System.Drawing.Color.PaleGreen;
             yield return System.Drawing.Color.LightGreen;
             yield return System.Drawing.Color.MediumSpringGreen;
-            yield return System.Drawing.Color.Lime;
             yield return System.Drawing.Color.SpringGreen;
+            yield return System.Drawing.Color.Lime;
             yield return System.Drawing.Color.LimeGreen;
             yield return System.Drawing.Color.MediumSeaGreen;
             yield return System.Drawing.Color.ForestGreen;
             yield return System.Drawing.Color.Green;
             yield return System.Drawing.Color.DarkGreen;
             yield return System.Drawing.Color.SeaGreen;
-            yield return System.Drawing.Color.YellowGreen;
             yield return System.Drawing.Color.DarkSeaGreen;
             yield return System.Drawing.Color.OliveDrab;
             yield return System.Drawing.Color.Olive;
@@ -526,17 +603,19 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.Aquamarine;
             yield return System.Drawing.Color.PaleTurquoise;
             yield return System.Drawing.Color.LightBlue;
+            yield return System.Drawing.Color.LightCyan;
             yield return System.Drawing.Color.PowderBlue;
             yield return System.Drawing.Color.SkyBlue;
             yield return System.Drawing.Color.LightSkyBlue;
+            yield return System.Drawing.Color.LightSteelBlue;
             yield return System.Drawing.Color.DeepSkyBlue;
             yield return System.Drawing.Color.Aqua;
             yield return System.Drawing.Color.Cyan;
             yield return System.Drawing.Color.DarkTurquoise;
             yield return System.Drawing.Color.DodgerBlue;
             yield return System.Drawing.Color.CornflowerBlue;
-            yield return System.Drawing.Color.RoyalBlue;
             yield return System.Drawing.Color.SteelBlue;
+            yield return System.Drawing.Color.RoyalBlue;
             yield return System.Drawing.Color.MediumBlue;
             yield return System.Drawing.Color.Blue;
             yield return System.Drawing.Color.DarkBlue;
@@ -548,8 +627,10 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.MediumSlateBlue;
             yield return System.Drawing.Color.MediumPurple;
             yield return System.Drawing.Color.BlueViolet;
-            yield return System.Drawing.Color.DarkOrchid;
             yield return System.Drawing.Color.DarkViolet;
+            yield return System.Drawing.Color.DarkOrchid;
+            yield return System.Drawing.Color.Purple;
+            yield return System.Drawing.Color.DarkMagenta;
             yield return System.Drawing.Color.MediumOrchid;
             yield return System.Drawing.Color.Magenta;
             yield return System.Drawing.Color.Fuchsia;
@@ -560,16 +641,14 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.MediumVioletRed;
             yield return System.Drawing.Color.DeepPink;
             yield return System.Drawing.Color.HotPink;
+            yield return System.Drawing.Color.Thistle;
             yield return System.Drawing.Color.LightPink;
             yield return System.Drawing.Color.Pink;
-            yield return System.Drawing.Color.Thistle;
-            yield return System.Drawing.Color.Lavender;
             yield return System.Drawing.Color.MistyRose;
+            yield return System.Drawing.Color.Lavender;
             yield return System.Drawing.Color.LavenderBlush;
-            yield return System.Drawing.Color.Linen;
             yield return System.Drawing.Color.AliceBlue;
             yield return System.Drawing.Color.Azure;
-            yield return System.Drawing.Color.LightCyan;
             yield return System.Drawing.Color.FloralWhite;
             yield return System.Drawing.Color.WhiteSmoke;
             yield return System.Drawing.Color.SeaShell;
@@ -583,7 +662,6 @@ namespace CsInlineColorViz
             yield return System.Drawing.Color.DarkGray;
             yield return System.Drawing.Color.Gray;
             yield return System.Drawing.Color.DimGray;
-            yield return System.Drawing.Color.LightSteelBlue;
             yield return System.Drawing.Color.LightSlateGray;
             yield return System.Drawing.Color.SlateGray;
             yield return System.Drawing.Color.DarkSlateGray;
