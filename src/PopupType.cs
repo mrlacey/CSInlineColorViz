@@ -7,5 +7,10 @@
         ConsoleColors,
         KnownColors,
         SystemColors,
+        // RGB
+        // RGBA?
+        // HSLA?
+        // HSV?
+        // HSVA?
     }
 }

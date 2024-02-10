@@ -55,6 +55,8 @@
     <Compile Include="ColorCtorTagger.cs" />
     <Compile Include="ColorCtorTaggerProvider.cs" />
     <Compile Include="ColorHelper.cs" />
+    <Compile Include="ColorHslaTagger.cs" />
+    <Compile Include="ColorHslaTaggerProvider.cs" />
     <Compile Include="ColorRgbTagger.cs" />
     <Compile Include="ColorRgbTaggerProvider.cs" />
     <Compile Include="ColorTag.cs" />

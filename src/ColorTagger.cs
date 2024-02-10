@@ -10,7 +10,6 @@ namespace CsInlineColorViz
     {
         private bool haveLoggedUseCount = false;
 
-        // TODO: Add support for System.Drawing.SystemColors and System.Windows.SystemColors?
         internal ColorTagger(ITextBuffer buffer)
             : base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors|SystemColors|System.Drawing.SystemColors|System.Windows.SystemColors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
