@@ -10,7 +10,7 @@ namespace CsInlineColorViz
             var settings = await InternalSettings.GetLiveInstanceAsync();
             if (settings.FirstUse == DateTime.MinValue)
             {
-                // Track forst known use so don't prompt too soon
+                // Track first known use so don't prompt too soon
                 settings.FirstUse = DateTime.UtcNow;
                 await settings.SaveAsync();
             }

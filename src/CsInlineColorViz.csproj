@@ -48,6 +48,8 @@
     <Compile Include="BaseOptionModel.cs" />
     <Compile Include="ColorAdornment.cs" />
     <Compile Include="ColorAdornmentTagger.cs" />
+    <Compile Include="ColorFromIntTagger.cs" />
+    <Compile Include="ColorFromIntTaggerProvider.cs" />
     <Compile Include="ColorFromNameTagger.cs" />
     <Compile Include="ColorArgbTagger.cs" />
     <Compile Include="ColorFromNameTaggerProvider.cs" />
@@ -55,6 +57,11 @@
     <Compile Include="ColorCtorTagger.cs" />
     <Compile Include="ColorCtorTaggerProvider.cs" />
     <Compile Include="ColorHelper.cs" />
+    <Compile Include="ColorHslaTagger.cs" />
+    <Compile Include="ColorHslaTaggerProvider.cs" />
+    <Compile Include="ColorHsvaTaggerProvider.cs" />
+    <Compile Include="ColorRgbaTagger.cs" />
+    <Compile Include="ColorRgbaTaggerProvider.cs" />
     <Compile Include="ColorRgbTagger.cs" />
     <Compile Include="ColorRgbTaggerProvider.cs" />
     <Compile Include="ColorTag.cs" />
@@ -62,6 +69,7 @@
     <Compile Include="ColorTaggerProvider.cs" />
     <Compile Include="CsInlineColorVizPackage.cs" />
     <Compile Include="InternalSettings.cs" />
+    <Compile Include="OutlineTextControl.cs" />
     <Compile Include="OutputPane.cs" />
     <Compile Include="HexIntTagger.cs" />
     <Compile Include="HexIntTaggerProvider.cs" />
@@ -70,6 +78,7 @@
     <Compile Include="IntraTextAdornmentTagger.cs" />
     <Compile Include="MauiProjTagger.cs" />
     <Compile Include="MauiProjTaggerProvider.cs" />
+    <Compile Include="PopupType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexTagger.cs" />
     <Compile Include="ColorAdornmentTaggerProvider.cs" />
@@ -80,6 +89,7 @@
     </Compile>
     <Compile Include="SponsorDetector.cs" />
     <Compile Include="SponsorRequestHelper.cs" />
+    <Compile Include="TextDocumentHelper.cs" />
     <Compile Include="UnityTagger.cs" />
     <Compile Include="UnityTaggerProvider.cs" />
   </ItemGroup>

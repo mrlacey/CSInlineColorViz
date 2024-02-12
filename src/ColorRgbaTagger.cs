@@ -5,10 +5,11 @@ using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
-    internal sealed class ColorRgbTagger : RegexTagger<ColorTag>
+    // TODO: might be good to combine this with ColorRgbTagger
+    internal sealed class ColorRgbaTagger : RegexTagger<ColorTag>
     {
-        internal ColorRgbTagger(ITextBuffer buffer)
-            : base(buffer, new[] { new Regex(@"(Color.FromRgb\()([0-9, ]{5,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+        internal ColorRgbaTagger(ITextBuffer buffer)
+            : base(buffer, new[] { new Regex(@"(Color.FromRgba\()([0-9, ]{7,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
         {
         }
 
@@ -22,7 +23,7 @@ namespace CsInlineColorViz
                 // Do this check here rather than as part of the RegEx so don't have to adjust the insertion point for the adornment
                 if (new[] { ' ', ',', '(' }.Contains(precedingChar))
                 {
-                    if (ColorHelper.TryGetRgbColor(value, out Color clr))
+                    if (ColorHelper.TryGetRgbaColor(value, out Color clr))
                     {
                         return new ColorTag(clr, match, lineNumber, lineStart, PopupType.None);
                     }

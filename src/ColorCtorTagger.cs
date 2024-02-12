@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
@@ -11,7 +11,7 @@ namespace CsInlineColorViz
         {
         }
 
-        protected override ColorTag TryCreateTagForMatch(Match match, int lineStart, int spanStart, string lineText)
+        protected override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
         {
             if (lineText.Contains(match.Value) && match.Groups.Count == 8)
             {
@@ -21,7 +21,7 @@ namespace CsInlineColorViz
 
                 try
                 {
-                    return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)));
+                    return new ColorTag(Color.FromRgb(byte.Parse(r), byte.Parse(g), byte.Parse(b)), match, lineNumber, lineStart, PopupType.None);
                 }
                 catch (System.Exception)
                 {
