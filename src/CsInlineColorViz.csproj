@@ -64,11 +64,15 @@
     <Compile Include="ColorRgbaTaggerProvider.cs" />
     <Compile Include="ColorRgbTagger.cs" />
     <Compile Include="ColorRgbTaggerProvider.cs" />
+    <Compile Include="ColorSelectionDialog.cs" />
     <Compile Include="ColorTag.cs" />
     <Compile Include="ColorTagger.cs" />
     <Compile Include="ColorTaggerProvider.cs" />
+    <Compile Include="ConsoleColorDialog.cs" />
     <Compile Include="CsInlineColorVizPackage.cs" />
     <Compile Include="InternalSettings.cs" />
+    <Compile Include="KnownColorDialog.cs" />
+    <Compile Include="NamedColorDialog.cs" />
     <Compile Include="OutlineTextControl.cs" />
     <Compile Include="OutputPane.cs" />
     <Compile Include="HexIntTagger.cs" />
@@ -89,6 +93,7 @@
     </Compile>
     <Compile Include="SponsorDetector.cs" />
     <Compile Include="SponsorRequestHelper.cs" />
+    <Compile Include="SystemColorsDialog.cs" />
     <Compile Include="TextDocumentHelper.cs" />
     <Compile Include="UnityTagger.cs" />
     <Compile Include="UnityTaggerProvider.cs" />

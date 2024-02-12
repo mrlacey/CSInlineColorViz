@@ -16,6 +16,8 @@ namespace CsInlineColorViz
 
         public ColorAdornment(ColorTag tag)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ClrTag = tag;
 
             Padding = new Thickness(0);
