@@ -48,6 +48,8 @@
     <Compile Include="BaseOptionModel.cs" />
     <Compile Include="ColorAdornment.cs" />
     <Compile Include="ColorAdornmentTagger.cs" />
+    <Compile Include="ColorFromIntTagger.cs" />
+    <Compile Include="ColorFromIntTaggerProvider.cs" />
     <Compile Include="ColorFromNameTagger.cs" />
     <Compile Include="ColorArgbTagger.cs" />
     <Compile Include="ColorFromNameTaggerProvider.cs" />
@@ -57,6 +59,9 @@
     <Compile Include="ColorHelper.cs" />
     <Compile Include="ColorHslaTagger.cs" />
     <Compile Include="ColorHslaTaggerProvider.cs" />
+    <Compile Include="ColorHsvaTaggerProvider.cs" />
+    <Compile Include="ColorRgbaTagger.cs" />
+    <Compile Include="ColorRgbaTaggerProvider.cs" />
     <Compile Include="ColorRgbTagger.cs" />
     <Compile Include="ColorRgbTaggerProvider.cs" />
     <Compile Include="ColorTag.cs" />

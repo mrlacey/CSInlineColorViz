@@ -7,6 +7,8 @@ namespace CsInlineColorViz
 {
     public static class ColorHelper
     {
+        private static double Tolerance => 0.000000000000001;
+
         public static bool TryGetColor(string colorName, out Color color)
         {
             try
@@ -56,6 +58,36 @@ namespace CsInlineColorViz
                 var sdc = ColorHelper.ToHex(System.Drawing.Color.FromName(args));
 
                 return TryGetColor(sdc, out color);
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
+
+        public static bool TryGetFromInt(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                return TryGetColor($"#{int.Parse(args).ToString("X")}", out color);
+            }
+            catch
+            {
+            }
+
+            return false;
+        }
+
+        public static bool TryGetFromUint(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                return TryGetColor($"#{uint.Parse(args).ToString("X")}", out color);
             }
             catch
             {
@@ -114,6 +146,274 @@ namespace CsInlineColorViz
             }
         }
 
+        public static bool TryGetHsvaColor(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                var parts = args.Replace("f", string.Empty).Replace("F", string.Empty).Replace("d", string.Empty).Replace("D", string.Empty).Split(',');
+
+                var lastPart = parts.Last().Trim();
+
+                if (parts.Length == 3)
+                {
+                    if (double.TryParse(parts[0], out double hue) && double.TryParse(parts[1], out double sat) && double.TryParse(parts[2], out double val))
+                    {
+                        color = ColorFromHSVA(hue, sat, val, 255);
+                        return true;
+                    }
+
+                    return false;
+                }
+                else if (parts.Length == 4)
+                {
+                    if (double.TryParse(parts[0], out double hue) && double.TryParse(parts[1], out double sat) && double.TryParse(parts[2], out double val) && double.TryParse(parts[3], out double alpha))
+                    {
+                        color = ColorFromHSVA(hue, sat, val, alpha);
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetHslaColor(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                var parts = args.Replace("f", string.Empty).Replace("F", string.Empty).Replace("d", string.Empty).Replace("D", string.Empty).Split(',');
+
+                var lastPart = parts.Last().Trim();
+
+                if (parts.Length == 3)
+                {
+                    if (double.TryParse(parts[0], out double hue) && double.TryParse(parts[1], out double sat) && double.TryParse(parts[2], out double lum))
+                    {
+                        color = HslaToColor(hue, sat, lum, 255);
+                        return true;
+                    }
+
+                    return false;
+                }
+                else if (parts.Length == 4)
+                {
+                    if (double.TryParse(parts[0], out double hue) && double.TryParse(parts[1], out double sat) && double.TryParse(parts[2], out double lum) && double.TryParse(parts[3], out double alpha))
+                    {
+                        color = HslaToColor(hue, sat, lum, alpha);
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
+        public static Color ColorFromHSVA(double hue, double saturation, double value, double alpha = 1.0)
+        {
+            return ColorFromHSVA(hue, saturation, value, (byte)(alpha * 255));
+        }
+
+        public static Color ColorFromHSVA(double hue, double saturation, double value, byte alpha = 255)
+        {
+            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            double f = hue / 60 - Math.Floor(hue / 60);
+
+            value = value * 255;
+            var v = Convert.ToByte(value);
+            var p = Convert.ToByte(value * (1 - saturation));
+            var q = Convert.ToByte(value * (1 - f * saturation));
+            var t = Convert.ToByte(value * (1 - (1 - f) * saturation));
+
+            if (hi == 0)
+                return Color.FromArgb(alpha, v, t, p);
+            else if (hi == 1)
+                return Color.FromArgb(alpha, q, v, p);
+            else if (hi == 2)
+                return Color.FromArgb(alpha, p, v, t);
+            else if (hi == 3)
+                return Color.FromArgb(alpha, p, q, v);
+            else if (hi == 4)
+                return Color.FromArgb(alpha, t, p, v);
+            else
+                return Color.FromArgb(alpha, v, p, q);
+        }
+
+        /// <summary>
+        /// Converts RGB to HSB. Alpha is ignored.
+        /// Output is: { H: [0, 360], S: [0, 1], B: [0, 1] }.
+        /// </summary>
+        /// <param name="color">The color to convert.</param>
+        public static double[] RgBtoHsb(Color color)
+        {
+            // normalize red, green and blue values
+            double r = color.R / 255D;
+            double g = color.G / 255D;
+            double b = color.B / 255D;
+
+            // conversion start
+            double max = System.Math.Max(r, System.Math.Max(g, b));
+            double min = System.Math.Min(r, System.Math.Min(g, b));
+
+            double h = 0D;
+            if ((System.Math.Abs(max - r) < Tolerance)
+                    && (g >= b))
+                h = (60D * (g - b)) / (max - min);
+            else if ((System.Math.Abs(max - r) < Tolerance)
+                    && (g < b))
+                h = ((60D * (g - b)) / (max - min)) + 360D;
+            else if (System.Math.Abs(max - g) < Tolerance)
+                h = ((60D * (b - r)) / (max - min)) + 120D;
+            else if (System.Math.Abs(max - b) < Tolerance)
+                h = ((60D * (r - g)) / (max - min)) + 240D;
+
+            double s = System.Math.Abs(max) < Tolerance
+                    ? 0D
+                    : 1D - (min / max);
+
+            return new[]
+            {
+                Math.Max(0D, Math.Min(360D, h)),
+                Math.Max(0D, Math.Min(1D, s)),
+                Math.Max(0D, Math.Min(1D, max))
+            };
+        }
+
+        /// <summary>
+        /// Converts RGB to HSL. Alpha is ignored.
+        /// Output is: { H: [0, 360], S: [0, 1], L: [0, 1] }.
+        /// </summary>
+        /// <param name="color">The color to convert.</param>
+        public static double[] RgBtoHsl(Color color)
+        {
+            double h = 0D;
+            double s = 0D;
+            double l;
+
+            // normalize red, green, blue values
+            double r = color.R / 255D;
+            double g = color.G / 255D;
+            double b = color.B / 255D;
+
+            double max = System.Math.Max(r, System.Math.Max(g, b));
+            double min = System.Math.Min(r, System.Math.Min(g, b));
+
+            // hue
+            if (System.Math.Abs(max - min) < Tolerance)
+                h = 0D; // undefined
+            else if ((System.Math.Abs(max - r) < Tolerance)
+                    && (g >= b))
+                h = (60D * (g - b)) / (max - min);
+            else if ((System.Math.Abs(max - r) < Tolerance)
+                    && (g < b))
+                h = ((60D * (g - b)) / (max - min)) + 360D;
+            else if (System.Math.Abs(max - g) < Tolerance)
+                h = ((60D * (b - r)) / (max - min)) + 120D;
+            else if (System.Math.Abs(max - b) < Tolerance)
+                h = ((60D * (r - g)) / (max - min)) + 240D;
+
+            // luminance
+            l = (max + min) / 2D;
+
+            // saturation
+            if ((System.Math.Abs(l) < Tolerance)
+                    || (System.Math.Abs(max - min) < Tolerance))
+                s = 0D;
+            else if ((0D < l)
+                    && (l <= .5D))
+                s = (max - min) / (max + min);
+            else if (l > .5D)
+                s = (max - min) / (2D - (max + min)); //(max-min > 0)?
+
+            return new[]
+            {
+                System.Math.Max(0D, System.Math.Min(360D, double.Parse($"{h:0.##}"))),
+                System.Math.Max(0D, System.Math.Min(1D, double.Parse($"{s:0.##}"))),
+                System.Math.Max(0D, System.Math.Min(1D, double.Parse($"{l:0.##}")))
+            };
+        }
+
+        public static Color HslaToColor(double h, double s, double l, double a = 1.0)
+        {
+            return HslaToColor(h, s, l, (byte)(a * 255));
+        }
+
+        /// <summary>
+        /// Converts HSL to RGB, with a specified output Alpha.
+        /// Arguments are limited to the defined range:
+        /// does not raise exceptions.
+        /// </summary>
+        /// <param name="h">Hue, must be in [0, 360].</param>
+        /// <param name="s">Saturation, must be in [0, 1].</param>
+        /// <param name="l">Luminance, must be in [0, 1].</param>
+        /// <param name="a">Output Alpha, must be in [0, 255].</param>
+        public static Color HslaToColor(double h, double s, double l, byte a = 255)
+        {
+            h = Math.Max(0D, Math.Min(360D, h));
+            s = Math.Max(0D, Math.Min(1D, s));
+            l = Math.Max(0D, Math.Min(1D, l));
+            a = Math.Max((byte)0, Math.Min((byte)255, a));
+
+            // achromatic argb (gray scale)
+            if (Math.Abs(s) < Tolerance)
+            {
+                return Color.FromArgb(
+                        a,
+                        (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}")))),
+                        (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}")))),
+                        (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{l * 255D:0.00}")))));
+            }
+
+            double q = l < .5D
+                    ? l * (1D + s)
+                    : (l + s) - (l * s);
+            double p = (2D * l) - q;
+
+            double hk = h / 360D;
+            double[] T = new double[3];
+            T[0] = hk + (1D / 3D); // Tr
+            T[1] = hk; // Tb
+            T[2] = hk - (1D / 3D); // Tg
+
+            for (int i = 0; i < 3; i++)
+            {
+                if (T[i] < 0D)
+                    T[i] += 1D;
+                if (T[i] > 1D)
+                    T[i] -= 1D;
+
+                if ((T[i] * 6D) < 1D)
+                    T[i] = p + ((q - p) * 6D * T[i]);
+                else if ((T[i] * 2D) < 1)
+                    T[i] = q;
+                else if ((T[i] * 3D) < 2)
+                    T[i] = p + ((q - p) * ((2D / 3D) - T[i]) * 6D);
+                else
+                    T[i] = p;
+            }
+
+            return Color.FromArgb(
+                    a,
+                    (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{T[0] * 255D:0.00}")))),
+                    (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{T[1] * 255D:0.00}")))),
+                    (byte)Math.Max(0, Math.Min(255, Convert.ToInt32(double.Parse($"{T[2] * 255D:0.00}")))));
+        }
+
         public static bool TryGetRgbColor(string args, out Color color)
         {
             color = default;
@@ -125,6 +425,31 @@ namespace CsInlineColorViz
                 if (parts.Length == 3)
                 {
                     color = Color.FromRgb(byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool TryGetRgbaColor(string args, out Color color)
+        {
+            color = default;
+
+            try
+            {
+                var parts = args.Split(',');
+
+                if (parts.Length == 4)
+                {
+                    // Note the order change. The method expectes rgbA, but this is taking Argb
+                    color = Color.FromArgb(byte.Parse(parts[3]), byte.Parse(parts[0]), byte.Parse(parts[1]), byte.Parse(parts[2]));
                     return true;
                 }
                 else
