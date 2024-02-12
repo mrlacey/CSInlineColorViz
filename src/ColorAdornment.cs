@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using EnvDTE;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
@@ -46,6 +44,9 @@ namespace CsInlineColorViz
         private async void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 #pragma warning restore VSTHRD100 // Avoid async void methods
         {
+            // TODO: Enable dialog support
+            return;
+
             // TODO: for preview releases only make this available to sponsors
             //if (await SponsorDetector.IsSponsorAsync())
 
@@ -129,140 +130,6 @@ namespace CsInlineColorViz
             catch { }
 
             return 12;
-        }
-    }
-
-    class ColorSelectionDialog : DialogWindow
-    {
-        public string SelectedName { get; set; }
-
-        public ColorSelectionDialog()
-        {
-            this.HasMaximizeButton = false;
-            this.HasMinimizeButton = false;
-
-            this.Width = 500;
-            this.Height = 400;
-            this.MinHeight = 200;
-            this.MinWidth = 200;
-        }
-
-        internal Button CreateButton(string name, System.Windows.Media.Color clr)
-        {
-            var cbtn = new Button
-            {
-                Content = name,
-                Background = new SolidColorBrush(clr),
-                Height = 30,
-            };
-            cbtn.Click += (s, e) => { SelectedName = name; this.DialogResult = true; };
-            return cbtn;
-        }
-
-    }
-
-    class NamedColorDialog : ColorSelectionDialog
-    {
-        public NamedColorDialog() : base()
-        {
-            var tabs = new TabControl();
-
-            var tab1 = new TabItem { Header = "  A-Z  " };
-
-            var sp = new StackPanel();
-
-            foreach (var color in ColorHelper.SystemDrawingColorsAlphabetical())
-            {
-                if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
-                {
-                    sp.Children.Add(CreateButton(color.Name, clr));
-                }
-            }
-
-            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
-            tab1.Content = sv;
-
-            var tab2 = new TabItem { Header = "   🌈   " };
-
-            var sp2 = new StackPanel();
-
-            foreach (var color in ColorHelper.SystemDrawingColorsSpectrum())
-            {
-                if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
-                {
-                    sp2.Children.Add(CreateButton(color.Name, clr));
-                }
-            }
-
-            var sv2 = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp2 };
-            tab2.Content = sv2;
-
-            tabs.Items.Add(tab1);
-            tabs.Items.Add(tab2);
-
-            this.Content = tabs;
-        }
-    }
-    class KnownColorDialog : ColorSelectionDialog
-    {
-        public KnownColorDialog() : base()
-        {
-            var sp = new StackPanel();
-
-            // TODO: consider separating "colors" and interpreted system values
-            //foreach (var color in Enum.GetValues(typeof(System.Drawing.KnownColor)))
-            foreach (var colorName in Enum.GetValues(typeof(System.Drawing.KnownColor)).Cast<object>().ToList().OrderBy(o => o.ToString()).Select(o => o.ToString()))
-            {
-                //if (ColorHelper.TryGetColor(color.ToString(), out System.Windows.Media.Color clr))
-                if (ColorHelper.TryGetColor(colorName, out System.Windows.Media.Color clr))
-                {
-                    //sp.Children.Add(CreateButton(color.ToString(), clr));
-                    sp.Children.Add(CreateButton(colorName, clr));
-                }
-            }
-
-            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
-
-            this.Content = sv;
-        }
-    }
-    // TODO: if the value returned from here is replacing a string that ends with "Color", this needs to be appended on the replacement too.
-    class SystemColorsDialog : ColorSelectionDialog
-    {
-        public SystemColorsDialog() : base()
-        {
-            var sp = new StackPanel();
-
-            foreach (var color in ColorHelper.SystemColorsAlphabetically())
-            {
-                if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
-                {
-                    sp.Children.Add(CreateButton(color.Name, clr));
-                }
-            }
-
-            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
-
-            this.Content = sv;
-        }
-    }
-    class ConsoleColorDialog : ColorSelectionDialog
-    {
-        public ConsoleColorDialog() : base()
-        {
-            var sp = new StackPanel();
-
-            foreach (var colorName in ColorHelper.ConsoleColorsNamesAlphabetical())
-            {
-                if (ColorHelper.TryGetColor(colorName, out System.Windows.Media.Color clr))
-                {
-                    sp.Children.Add(CreateButton(colorName, clr));
-                }
-            }
-
-            var sv = new ScrollViewer { VerticalScrollBarVisibility = ScrollBarVisibility.Auto, Content = sp };
-
-            this.Content = sv;
         }
     }
 }
