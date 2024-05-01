@@ -6,16 +6,20 @@ using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
-	internal sealed class ColorTagger : RegexTagger<ColorTag>
+	internal sealed class ColorTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 	{
+		internal static Regex regularExpression = new(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors|SystemColors|System.Drawing.SystemColors|System.Windows.SystemColors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+		public Regex ColorExpression => regularExpression;
+
 		private bool haveLoggedUseCount = false;
 
 		internal ColorTagger(ITextBuffer buffer)
-			: base(buffer, new[] { new Regex(@"(Color|Colors|ConsoleColor|System.Windows.Media.Colors|System.Drawing.Color|KnownColor|System.Drawing.KnownColor|Microsoft.UI.Colors|SystemColors|System.Drawing.SystemColors|System.Windows.SystemColors)([\.]{1})(?!From)([a-zA-Z]{3,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+			: base(buffer, [regularExpression])
 		{
 		}
 
-		protected override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
+		internal override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
 		{
 			if (lineText.Contains(match.Value) && match.Groups.Count == 4)
 			{

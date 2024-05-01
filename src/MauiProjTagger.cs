@@ -4,14 +4,18 @@ using Microsoft.VisualStudio.Text;
 
 namespace CsInlineColorViz
 {
-	internal sealed class MauiProjTagger : RegexTagger<ColorTag>
+	internal sealed class MauiProjTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 	{
+		internal static Regex regularExpression = new("( Color=\"#)([0-9A-F]{3,8})(\")", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+		public Regex ColorExpression => regularExpression;
+
 		internal MauiProjTagger(ITextBuffer buffer)
-			: base(buffer, new[] { new Regex("( Color=\"#)([0-9A-F]{3,8})(\")", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase) })
+			: base(buffer, [regularExpression])
 		{
 		}
 
-		protected override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
+		internal override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
 		{
 			if (lineText.Contains(match.Value) && match.Groups.Count == 4)
 			{

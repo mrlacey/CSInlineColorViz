@@ -70,7 +70,7 @@ namespace CsInlineColorViz
 		/// </summary>
 		/// <param name="match">The match to create a tag for.</param>
 		/// <returns>The tag to return from <see cref="GetTags"/>, if non-<c>null</c>.</returns>
-		protected abstract T TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText);
+		internal abstract T TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText);
 
 		/// <summary>
 		/// Handle buffer changes. The default implementation expands changes to full lines and sends out
