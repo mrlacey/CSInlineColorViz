@@ -60,6 +60,7 @@
     <Compile Include="ColorHelper.cs" />
     <Compile Include="ColorHslaTagger.cs" />
     <Compile Include="ColorHslaTaggerProvider.cs" />
+    <Compile Include="ColorHsvaTagger.cs" />
     <Compile Include="ColorHsvaTaggerProvider.cs" />
     <Compile Include="ColorRgbaTagger.cs" />
     <Compile Include="ColorRgbaTaggerProvider.cs" />
