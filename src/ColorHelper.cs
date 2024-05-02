@@ -24,7 +24,7 @@ namespace CsInlineColorViz
 					// The System.Windows versions of SystemColors end with "Color" (but the System.Drawing versions don't)
 					if (colorName.EndsWith("Color"))
 					{
-						colorName = colorName.Substring(0, colorName.Length - 5);
+						colorName = colorName.Substring(0, colorName.Length - "Color".Length);
 					}
 
 					if (Enum.TryParse(colorName, out System.Drawing.KnownColor knownColor))

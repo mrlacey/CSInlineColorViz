@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace CsInlineColorViz
 {
-	internal class ColorTag : ITag
+	public class ColorTag : ITag
 	{
 		public ColorTag(Color clr, Match match, int lineNumber, int lineCharOffset, PopupType popupType)
 		{

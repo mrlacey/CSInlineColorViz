@@ -11,7 +11,7 @@ internal sealed class UnityTagger : RegexTagger<ColorTag>, ITestableRegexColorTa
 
 	public Regex ColorExpression => regularExpression;
 
-	internal UnityTagger(ITextBuffer buffer)
+	public UnityTagger(ITextBuffer buffer)
 		: base(buffer, [regularExpression])
 	{
 	}

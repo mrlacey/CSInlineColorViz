@@ -44,7 +44,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="BaseTaggerTests.cs" />
+    <Compile Include="FakeTextBuffer.cs" />
+    <Compile Include="UnityTaggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

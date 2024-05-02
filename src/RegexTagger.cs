@@ -15,7 +15,7 @@ namespace CsInlineColorViz
 	/// Regular expressions are expected to be single-line.
 	/// </remarks>
 	/// <typeparam name="T">The type of tags that will be produced by this tagger.</typeparam>
-	internal abstract class RegexTagger<T> : ITagger<T>
+	public abstract class RegexTagger<T> : ITagger<T>
 		where T : ITag
 	{
 		private readonly IEnumerable<Regex> matchExpressions;

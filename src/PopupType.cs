@@ -1,16 +1,15 @@
-﻿namespace CsInlineColorViz
+﻿namespace CsInlineColorViz;
+
+public enum PopupType
 {
-	enum PopupType
-	{
-		None,
-		NamedColors,
-		ConsoleColors,
-		KnownColors,
-		SystemColors,
-		// RGB
-		// RGBA?
-		// HSLA?
-		// HSV?
-		// HSVA?
-	}
+	None,
+	NamedColors,
+	ConsoleColors,
+	KnownColors,
+	SystemColors,
+	// RGB
+	// RGBA?
+	// HSLA?
+	// HSV?
+	// HSVA?
 }
