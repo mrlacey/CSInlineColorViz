@@ -44,8 +44,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AllTaggersTests.cs" />
     <Compile Include="BaseTaggerTests.cs" />
+    <Compile Include="ColorHelperTests.cs" />
+    <Compile Include="ColorCtorTaggerTests.cs" />
     <Compile Include="FakeTextBuffer.cs" />
+    <Compile Include="Color32TaggerTests.cs" />
+    <Compile Include="TaggerTestHelper.cs" />
     <Compile Include="UnityTaggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace CSInlineColorViz.Tests;
 
-// TODO: Add lots of lovely tests
 [TestClass]
 public class UnityTaggerTests : BaseTaggerTests
 {
@@ -27,8 +26,6 @@ public class UnityTaggerTests : BaseTaggerTests
 		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
 
 		Assert.IsNotNull(tag);
-
-		// TODO: check that the color is correct
 	}
 
 	[TestMethod]
@@ -44,12 +41,9 @@ public class UnityTaggerTests : BaseTaggerTests
 
 		Assert.AreEqual(1, matches.Count());
 
-		// TODO: add support for line number, line start, and span start
 		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
 
 		Assert.IsNotNull(tag);
-
-		// TODO: check that the color is correct
 	}
 
 	[TestMethod]
@@ -65,12 +59,9 @@ public class UnityTaggerTests : BaseTaggerTests
 
 		Assert.AreEqual(1, matches.Count());
 
-		// TODO: add support for line number, line start, and span start
 		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
 
 		Assert.IsNotNull(tag);
-
-		// TODO: check that the color is correct
 	}
 
 	[TestMethod]
@@ -86,12 +77,9 @@ public class UnityTaggerTests : BaseTaggerTests
 
 		Assert.AreEqual(1, matches.Count());
 
-		// TODO: add support for line number, line start, and span start
 		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
 
 		Assert.IsNotNull(tag);
-
-		// TODO: check that the color is correct
 	}
 
 	[TestMethod]
@@ -156,11 +144,5 @@ public class UnityTaggerTests : BaseTaggerTests
 		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
 
 		Assert.IsNull(tag);
-	}
-
-	[TestMethod]
-	public void DoesNotMatch_InconsequentialText()
-	{
-		base.DoesNotMatch_InconsequentialText<UnityTagger>();
 	}
 }

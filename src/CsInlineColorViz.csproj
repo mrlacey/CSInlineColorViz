@@ -47,6 +47,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BaseOptionModel.cs" />
+    <Compile Include="Color32Tagger.cs" />
+    <Compile Include="Color32TaggerProvider.cs" />
     <Compile Include="ColorAdornment.cs" />
     <Compile Include="ColorAdornmentTagger.cs" />
     <Compile Include="ColorFromIntTagger.cs" />
