@@ -123,9 +123,6 @@
     <PackageReference Include="Microsoft.VisualStudio.SDK">
       <Version>17.8.37222</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.VSSDK.Vsixsigntool">
-      <Version>16.2.29116.78</Version>
-    </PackageReference>
     <PackageReference Include="System.Net.Http">
       <Version>4.3.4</Version>
     </PackageReference>
