@@ -1,6 +1,7 @@
-﻿using CsInlineColorViz;
-using System.Reflection;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using CsInlineColorViz;
 
 [assembly: AssemblyTitle(Vsix.Name)]
 [assembly: AssemblyDescription(Vsix.Description)]
@@ -15,3 +16,5 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion(Vsix.Version)]
 [assembly: AssemblyFileVersion(Vsix.Version)]
+
+[assembly: InternalsVisibleTo("CsInlineColorViz.Tests")]

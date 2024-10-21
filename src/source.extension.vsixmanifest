@@ -5,6 +5,7 @@
         <DisplayName>C# Inline Color Vizualizer</DisplayName>
         <Description xml:space="preserve">See samples of the colors you use within your C# code.  </Description>
         <MoreInfo>https://github.com/mrlacey/CSInlineColorViz</MoreInfo>
+        <License>LICENSE.txt</License>
         <Icon>Resources\Icon.png</Icon>
         <PreviewImage>Resources\Icon.png</PreviewImage>
     </Metadata>
