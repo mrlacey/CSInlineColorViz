@@ -5,50 +5,49 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Task = System.Threading.Tasks.Task;
 
-namespace CsInlineColorViz
+namespace CsInlineColorViz;
+
+public class OutputPane
 {
-	public class OutputPane
+	private static Guid csicvPaneGuid = new Guid("D5024E0F-63F2-431D-A68B-924CE419B8D3");
+
+	private static OutputPane instance;
+
+	private readonly IVsOutputWindowPane pane;
+
+	private OutputPane()
 	{
-		private static Guid csicvPaneGuid = new Guid("D5024E0F-63F2-431D-A68B-924CE419B8D3");
+		ThreadHelper.ThrowIfNotOnUIThread();
 
-		private static OutputPane instance;
-
-		private readonly IVsOutputWindowPane pane;
-
-		private OutputPane()
+		if (ServiceProvider.GlobalProvider.GetService(typeof(SVsOutputWindow)) is IVsOutputWindow outWindow
+		 && (ErrorHandler.Failed(outWindow.GetPane(ref csicvPaneGuid, out pane)) || pane == null))
 		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-
-			if (ServiceProvider.GlobalProvider.GetService(typeof(SVsOutputWindow)) is IVsOutputWindow outWindow
-			 && (ErrorHandler.Failed(outWindow.GetPane(ref csicvPaneGuid, out pane)) || pane == null))
+			if (ErrorHandler.Failed(outWindow.CreatePane(ref csicvPaneGuid, Vsix.Name, 1, 0)))
 			{
-				if (ErrorHandler.Failed(outWindow.CreatePane(ref csicvPaneGuid, Vsix.Name, 1, 0)))
-				{
-					System.Diagnostics.Debug.WriteLine("Failed to create the Output window pane.");
-					return;
-				}
+				System.Diagnostics.Debug.WriteLine("Failed to create the Output window pane.");
+				return;
+			}
 
-				if (ErrorHandler.Failed(outWindow.GetPane(ref csicvPaneGuid, out pane)) || (pane == null))
-				{
-					System.Diagnostics.Debug.WriteLine("Failed to get access to the Output window pane.");
-				}
+			if (ErrorHandler.Failed(outWindow.GetPane(ref csicvPaneGuid, out pane)) || (pane == null))
+			{
+				System.Diagnostics.Debug.WriteLine("Failed to get access to the Output window pane.");
 			}
 		}
+	}
 
-		public static OutputPane Instance => instance ??= new OutputPane();
+	public static OutputPane Instance => instance ??= new OutputPane();
 
-		public async Task ActivateAsync()
-		{
-			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
+	public async Task ActivateAsync()
+	{
+		await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
 
-			pane?.Activate();
-		}
+		pane?.Activate();
+	}
 
-		public async Task WriteAsync(string message)
-		{
-			await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
+	public async Task WriteAsync(string message)
+	{
+		await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken.None);
 
-			_ = (pane?.OutputStringThreadSafe($"{message}{Environment.NewLine}"));
-		}
+		_ = (pane?.OutputStringThreadSafe($"{message}{Environment.NewLine}"));
 	}
 }

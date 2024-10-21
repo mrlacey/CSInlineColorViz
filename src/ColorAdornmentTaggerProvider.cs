@@ -5,44 +5,43 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-namespace CsInlineColorViz
+namespace CsInlineColorViz;
+
+[Export(typeof(IViewTaggerProvider))]
+[ContentType("text")]
+[ContentType("projection")]
+[TagType(typeof(IntraTextAdornmentTag))]
+internal sealed class ColorAdornmentTaggerProvider : IViewTaggerProvider
 {
-	[Export(typeof(IViewTaggerProvider))]
-	[ContentType("text")]
-	[ContentType("projection")]
-	[TagType(typeof(IntraTextAdornmentTag))]
-	internal sealed class ColorAdornmentTaggerProvider : IViewTaggerProvider
-	{
 #pragma warning disable 649 // "field never assigned to" -- field is set by MEF.
-		[Import]
+	[Import]
 #pragma warning disable SA1401 // Fields should be private
-		internal IBufferTagAggregatorFactoryService BufferTagAggregatorFactoryService;
+	internal IBufferTagAggregatorFactoryService BufferTagAggregatorFactoryService;
 #pragma warning restore SA1401 // Fields should be private
 #pragma warning restore 649
 
-		public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer)
-			where T : ITag
+	public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer)
+		where T : ITag
+	{
+		if (textView == null)
 		{
-			if (textView == null)
-			{
-				throw new ArgumentNullException("textView");
-			}
-
-			if (buffer == null)
-			{
-				throw new ArgumentNullException("buffer");
-			}
-
-			if (buffer != textView.TextBuffer)
-			{
-				return null;
-			}
-
-			return ColorAdornmentTagger.GetTagger(
-				(IWpfTextView)textView,
-				new Lazy<ITagAggregator<ColorTag>>(
-					() => this.BufferTagAggregatorFactoryService.CreateTagAggregator<ColorTag>(textView.TextBuffer)))
-				as ITagger<T>;
+			throw new ArgumentNullException("textView");
 		}
+
+		if (buffer == null)
+		{
+			throw new ArgumentNullException("buffer");
+		}
+
+		if (buffer != textView.TextBuffer)
+		{
+			return null;
+		}
+
+		return ColorAdornmentTagger.GetTagger(
+			(IWpfTextView)textView,
+			new Lazy<ITagAggregator<ColorTag>>(
+				() => this.BufferTagAggregatorFactoryService.CreateTagAggregator<ColorTag>(textView.TextBuffer)))
+			as ITagger<T>;
 	}
 }
