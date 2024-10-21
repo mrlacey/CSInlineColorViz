@@ -56,10 +56,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>3.3.1</Version>
+      <Version>3.6.1</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>3.3.1</Version>
+      <Version>3.6.1</Version>
     </PackageReference>
     <PackageReference Include="WarnAboutTODOs">
       <Version>1.6.0</Version>
