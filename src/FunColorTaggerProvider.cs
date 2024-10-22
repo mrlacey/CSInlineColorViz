@@ -11,7 +11,7 @@ namespace CsInlineColorViz;
 [ContentType("Razor")]
 [ContentType("LegacyRazorCSharp")]
 [TagType(typeof(ColorTag))]
-internal sealed class HexIntTaggerProvider : ITaggerProvider
+internal sealed class FunColorTaggerProvider : ITaggerProvider
 {
 	public ITagger<T> CreateTagger<T>(ITextBuffer buffer)
 		where T : ITag
@@ -21,6 +21,6 @@ internal sealed class HexIntTaggerProvider : ITaggerProvider
 			throw new ArgumentNullException(nameof(buffer));
 		}
 
-		return buffer.Properties.GetOrCreateSingletonProperty(() => new HexIntTagger(buffer)) as ITagger<T>;
+		return buffer.Properties.GetOrCreateSingletonProperty(() => new FunColorTagger(buffer)) as ITagger<T>;
 	}
 }

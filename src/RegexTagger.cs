@@ -6,129 +6,128 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace CsInlineColorViz
+namespace CsInlineColorViz;
+
+/// <summary>
+/// Helper base class for writing simple taggers based on regular expressions.
+/// </summary>
+/// <remarks>
+/// Regular expressions are expected to be single-line.
+/// </remarks>
+/// <typeparam name="T">The type of tags that will be produced by this tagger.</typeparam>
+public abstract class RegexTagger<T> : ITagger<T>
+	where T : ITag
 {
-	/// <summary>
-	/// Helper base class for writing simple taggers based on regular expressions.
-	/// </summary>
-	/// <remarks>
-	/// Regular expressions are expected to be single-line.
-	/// </remarks>
-	/// <typeparam name="T">The type of tags that will be produced by this tagger.</typeparam>
-	public abstract class RegexTagger<T> : ITagger<T>
-		where T : ITag
+	private readonly IEnumerable<Regex> matchExpressions;
+
+	public RegexTagger(ITextBuffer buffer, IEnumerable<Regex> matchExpressions)
 	{
-		private readonly IEnumerable<Regex> matchExpressions;
-
-		public RegexTagger(ITextBuffer buffer, IEnumerable<Regex> matchExpressions)
+		if (matchExpressions.Any(re => (re.Options & RegexOptions.Multiline) == RegexOptions.Multiline))
 		{
-			if (matchExpressions.Any(re => (re.Options & RegexOptions.Multiline) == RegexOptions.Multiline))
-			{
-				throw new ArgumentException("Multiline regular expressions are not supported.");
-			}
-
-			this.matchExpressions = matchExpressions;
-
-			buffer.Changed += (sender, args) => this.HandleBufferChanged(args);
+			throw new ArgumentException("Multiline regular expressions are not supported.");
 		}
 
-		public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+		this.matchExpressions = matchExpressions;
 
-		public virtual IEnumerable<ITagSpan<T>> GetTags(NormalizedSnapshotSpanCollection spans)
+		buffer.Changed += (sender, args) => this.HandleBufferChanged(args);
+	}
+
+	public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+
+	public virtual IEnumerable<ITagSpan<T>> GetTags(NormalizedSnapshotSpanCollection spans)
+	{
+		string snapshotText = null;
+
+		// Here we grab whole lines so that matches that only partially fall inside the spans argument are detected.
+		// Note that the spans argument can contain spans that are sub-spans of lines or intersect multiple lines.
+		foreach (var (line, spanStart) in this.GetIntersectingLines(spans))
 		{
-			string snapshotText = null;
+			string lineText = line.GetText();
 
-			// Here we grab whole lines so that matches that only partially fall inside the spans argument are detected.
-			// Note that the spans argument can contain spans that are sub-spans of lines or intersect multiple lines.
-			foreach (var (line, spanStart) in this.GetIntersectingLines(spans))
+			foreach (var regex in this.matchExpressions)
 			{
-				string lineText = line.GetText();
-
-				foreach (var regex in this.matchExpressions)
+				foreach (var match in regex.Matches(lineText).Cast<Match>())
 				{
-					foreach (var match in regex.Matches(lineText).Cast<Match>())
-					{
-						snapshotText ??= spans[0].Snapshot.GetText();
+					snapshotText ??= spans[0].Snapshot.GetText();
 
-						T tag = this.TryCreateTagForMatch(match, line.LineNumber, line.Start.Position, spanStart, lineText);
-						if (tag != null)
-						{
-							var afterEqualsPos = match.Value.IndexOf('=') + 1;
-							var span = new SnapshotSpan(line.Start + match.Index + afterEqualsPos, match.Length);
-							yield return new TagSpan<T>(span, tag);
-						}
+					T tag = this.TryCreateTagForMatch(match, line.LineNumber, line.Start.Position, spanStart, lineText);
+					if (tag != null)
+					{
+						var afterEqualsPos = match.Value.IndexOf('=') + 1;
+						var span = new SnapshotSpan(line.Start + match.Index + afterEqualsPos, match.Length);
+						yield return new TagSpan<T>(span, tag);
 					}
 				}
 			}
+		}
 
+		yield break;
+	}
+
+	/// <summary>
+	/// Overridden in the derived implementation to provide a tag for each regular expression match.
+	/// If the return value is <c>null</c>, this match will be skipped.
+	/// </summary>
+	/// <param name="match">The match to create a tag for.</param>
+	/// <returns>The tag to return from <see cref="GetTags"/>, if non-<c>null</c>.</returns>
+	internal abstract T TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText);
+
+	/// <summary>
+	/// Handle buffer changes. The default implementation expands changes to full lines and sends out
+	/// a <see cref="TagsChanged"/> event for these lines.
+	/// </summary>
+	/// <param name="args">The buffer change arguments.</param>
+	protected virtual void HandleBufferChanged(TextContentChangedEventArgs args)
+	{
+		if (args.Changes.Count == 0)
+		{
+			return;
+		}
+
+		var temp = this.TagsChanged;
+		if (temp == null)
+		{
+			return;
+		}
+
+		// Combine all changes into a single span so that
+		// the ITagger<>.TagsChanged event can be raised just once for a compound edit
+		// with many parts.
+		ITextSnapshot snapshot = args.After;
+
+		int start = args.Changes[0].NewPosition;
+		int end = args.Changes[args.Changes.Count - 1].NewEnd;
+
+		var totalAffectedSpan = new SnapshotSpan(
+			snapshot.GetLineFromPosition(start).Start,
+			snapshot.GetLineFromPosition(end).End);
+
+		temp(this, new SnapshotSpanEventArgs(totalAffectedSpan));
+	}
+
+	private IEnumerable<(ITextSnapshotLine, int)> GetIntersectingLines(NormalizedSnapshotSpanCollection spans)
+	{
+		if (spans.Count == 0)
+		{
 			yield break;
 		}
 
-		/// <summary>
-		/// Overridden in the derived implementation to provide a tag for each regular expression match.
-		/// If the return value is <c>null</c>, this match will be skipped.
-		/// </summary>
-		/// <param name="match">The match to create a tag for.</param>
-		/// <returns>The tag to return from <see cref="GetTags"/>, if non-<c>null</c>.</returns>
-		internal abstract T TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText);
+		int lastVisitedLineNumber = -1;
+		ITextSnapshot snapshot = spans[0].Snapshot;
 
-		/// <summary>
-		/// Handle buffer changes. The default implementation expands changes to full lines and sends out
-		/// a <see cref="TagsChanged"/> event for these lines.
-		/// </summary>
-		/// <param name="args">The buffer change arguments.</param>
-		protected virtual void HandleBufferChanged(TextContentChangedEventArgs args)
+		foreach (var span in spans)
 		{
-			if (args.Changes.Count == 0)
+			int firstLine = snapshot.GetLineNumberFromPosition(span.Start);
+			int lastLine = snapshot.GetLineNumberFromPosition(span.End);
+
+			for (int i = Math.Max(lastVisitedLineNumber, firstLine); i <= lastLine; i++)
 			{
-				return;
+				yield return (snapshot.GetLineFromLineNumber(i), span.Start);
 			}
 
-			var temp = this.TagsChanged;
-			if (temp == null)
-			{
-				return;
-			}
-
-			// Combine all changes into a single span so that
-			// the ITagger<>.TagsChanged event can be raised just once for a compound edit
-			// with many parts.
-			ITextSnapshot snapshot = args.After;
-
-			int start = args.Changes[0].NewPosition;
-			int end = args.Changes[args.Changes.Count - 1].NewEnd;
-
-			var totalAffectedSpan = new SnapshotSpan(
-				snapshot.GetLineFromPosition(start).Start,
-				snapshot.GetLineFromPosition(end).End);
-
-			temp(this, new SnapshotSpanEventArgs(totalAffectedSpan));
+			lastVisitedLineNumber = lastLine;
 		}
 
-		private IEnumerable<(ITextSnapshotLine, int)> GetIntersectingLines(NormalizedSnapshotSpanCollection spans)
-		{
-			if (spans.Count == 0)
-			{
-				yield break;
-			}
-
-			int lastVisitedLineNumber = -1;
-			ITextSnapshot snapshot = spans[0].Snapshot;
-
-			foreach (var span in spans)
-			{
-				int firstLine = snapshot.GetLineNumberFromPosition(span.Start);
-				int lastLine = snapshot.GetLineNumberFromPosition(span.End);
-
-				for (int i = Math.Max(lastVisitedLineNumber, firstLine); i <= lastLine; i++)
-				{
-					yield return (snapshot.GetLineFromLineNumber(i), span.Start);
-				}
-
-				lastVisitedLineNumber = lastLine;
-			}
-
-			yield break;
-		}
+		yield break;
 	}
 }

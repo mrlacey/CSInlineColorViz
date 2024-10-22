@@ -44,8 +44,6 @@ public static class ColorHelper
 		}
 	}
 
-
-
 	public static string ToHex(System.Drawing.Color c)
 	{
 		return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
@@ -646,6 +644,43 @@ public static class ColorHelper
 			case "whitesmoke": return "#F5F5F5";
 			case "yellow": return "#FFFF00";
 			case "yellowgreen": return "#9ACD32";
+
+			// FunColors
+			case "dotnetpurple2024": return "#512BD4";
+			case "xamarinblue2011": return "#5596D8";
+			case "androidbotgreen2024": return "#A7CD45";
+			case "rubberduckyellow": return "#FFD700";
+			case "gameboygreen": return "#9BBC0F";
+			case "barbiepink": return "#DA1884";
+			case "potatoheadbrown": return "#8B4513";
+			case "ticklemeelmored": return "#FF3F3F";
+			case "legored": return "#B40000";
+			case "hotwheelsblue": return "#005BAC";
+			case "nerforange": return "#FF6F00";
+			case "playdohyellow": return "#FBE870";
+			case "mylittleponypurple": return "#DDA0DD";
+			case "transformerssilver": return "#C0C0C0";
+			case "gijoegreen": return "#4B5320";
+			case "powerrangersred": return "#FF0000";
+			case "teenagemutantninjaturtlesgreen": return "#008000";
+			case "carebearsrainbow": return "#FF69B4";
+			case "appleiibeige": return "#D3D3D3";
+			case "commodore64brown": return "#6C4F3D";
+			case "atari800blue": return "#0057A0";
+			case "ibmpcgray": return "#808080";
+			case "trs80silver": return "#C0C0C0";
+			case "zxspectrumblack": return "#000000";
+			case "amigawhite": return "#FFFFFF";
+			case "msxblue": return "#0000FF";
+			case "bratsummer": return "#8ACE00";
+			case "bratautumn": return "#FF8C00";
+			case "neonelectricblue": return "#154FEE";
+			case "neonvividmagenta": return "#FF08FC";
+			case "pukepink": return "#FF3AC6";
+			case "mushypeas": return "#5FA41C";
+			case "painfulred": return "#FF1A00";
+			case "shrekgreen": return "#009B00";
+
 			default: return colorName;
 		}
 	}

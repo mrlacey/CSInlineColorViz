@@ -8,130 +8,129 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
-namespace CsInlineColorViz
+namespace CsInlineColorViz;
+
+internal sealed class ColorAdornment : Border
 {
-	internal sealed class ColorAdornment : Border
+	private static readonly SolidColorBrush _borderColor = (SolidColorBrush)Application.Current.Resources[VsBrushes.CaptionTextKey];
+
+	public ColorAdornment(ColorTag tag)
 	{
-		private static readonly SolidColorBrush _borderColor = (SolidColorBrush)Application.Current.Resources[VsBrushes.CaptionTextKey];
+		ThreadHelper.ThrowIfNotOnUIThread();
 
-		public ColorAdornment(ColorTag tag)
+		ClrTag = tag;
+
+		Padding = new Thickness(0);
+		BorderThickness = new Thickness(1);
+		BorderBrush = _borderColor;
+		Height = GetFontSize() + 2; ;
+		Width = Height;
+		VerticalAlignment = System.Windows.VerticalAlignment.Center;
+		Margin = new System.Windows.Thickness(0, 0, 2, 3);
+		SetBackground();
+
+		this.MouseLeftButtonDown += OnMouseLeftButtonDown;
+	}
+
+	private ColorSelectionDialog CreateDialogForPopupType(PopupType popupType)
+		=> popupType switch
 		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-
-			ClrTag = tag;
-
-			Padding = new Thickness(0);
-			BorderThickness = new Thickness(1);
-			BorderBrush = _borderColor;
-			Height = GetFontSize() + 2; ;
-			Width = Height;
-			VerticalAlignment = System.Windows.VerticalAlignment.Center;
-			Margin = new System.Windows.Thickness(0, 0, 2, 3);
-			SetBackground();
-
-			this.MouseLeftButtonDown += OnMouseLeftButtonDown;
-		}
-
-		private ColorSelectionDialog CreateDialogForPopupType(PopupType popupType)
-			=> popupType switch
-			{
-				PopupType.NamedColors => new NamedColorDialog(),
-				PopupType.ConsoleColors => new ConsoleColorDialog(),
-				PopupType.KnownColors => new KnownColorDialog(),
-				PopupType.SystemColors => new SystemColorsDialog(),
-				_ => throw new NotImplementedException(),
-			};
+			PopupType.NamedColors => new NamedColorDialog(),
+			PopupType.ConsoleColors => new ConsoleColorDialog(),
+			PopupType.KnownColors => new KnownColorDialog(),
+			PopupType.SystemColors => new SystemColorsDialog(),
+			_ => throw new NotImplementedException(),
+		};
 
 #pragma warning disable VSTHRD100 // Avoid async void methods - It's from a button click!
-		private async void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+	private async void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 #pragma warning restore VSTHRD100 // Avoid async void methods
+	{
+		// TODO: Enable dialog support
+		return;
+
+		// TODO: for preview releases only make this available to sponsors
+		//if (await SponsorDetector.IsSponsorAsync())
+
+		if (e.ClickCount == 2 && ClrTag.PopupType != PopupType.None)
 		{
-			// TODO: Enable dialog support
-			return;
+			var dlg = CreateDialogForPopupType(ClrTag.PopupType);
+			var dlgResult = dlg.ShowModal();
 
-			// TODO: for preview releases only make this available to sponsors
-			//if (await SponsorDetector.IsSponsorAsync())
-
-			if (e.ClickCount == 2 && ClrTag.PopupType != PopupType.None)
+			if (dlgResult == true)
 			{
-				var dlg = CreateDialogForPopupType(ClrTag.PopupType);
-				var dlgResult = dlg.ShowModal();
+				// We always should be on the UI thread here as the user just clicked on the dialog.
+				await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-				if (dlgResult == true)
+				await CsInlineColorVizPackage.EnsureInstanceLoadedAsync();
+
+				var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+
+				if (dte.ActiveDocument.Object("TextDocument") is EnvDTE.TextDocument txtDoc)
 				{
-					// We always should be on the UI thread here as the user just clicked on the dialog.
-					await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+					var find = ClrTag.Match.Groups[0].Value;
+					var replace = $"{ClrTag.Match.Groups[1].Value}{ClrTag.Match.Groups[2].Value}{dlg.SelectedName}";
+					var matches = await TextDocumentHelper.FindMatches(txtDoc, find);
 
-					await CsInlineColorVizPackage.EnsureInstanceLoadedAsync();
-
-					var dte = (DTE)Package.GetGlobalService(typeof(DTE));
-
-					if (dte.ActiveDocument.Object("TextDocument") is EnvDTE.TextDocument txtDoc)
+					if (!dte.UndoContext.IsOpen)
 					{
-						var find = ClrTag.Match.Groups[0].Value;
-						var replace = $"{ClrTag.Match.Groups[1].Value}{ClrTag.Match.Groups[2].Value}{dlg.SelectedName}";
-						var matches = await TextDocumentHelper.FindMatches(txtDoc, find);
+						dte.UndoContext.Open($"Changing color to: {replace}");
+					}
 
-						if (!dte.UndoContext.IsOpen)
+					foreach (var matchPoint in matches)
+					{
+						// TODO: Need to account for the line number in the tag not having been updated even if the line has changed
+						// Add one to the line number as the EditPoint is 1-based
+						if (matchPoint.Line == ClrTag.LineNumber + 1)
 						{
-							dte.UndoContext.Open($"Changing color to: {replace}");
-						}
+							var replacementMade = await TextDocumentHelper.MakeReplacements(txtDoc, matchPoint, find, replace);
 
-						foreach (var matchPoint in matches)
-						{
-							// TODO: Need to account for the line number in the tag not having been updated even if the line has changed
-							// Add one to the line number as the EditPoint is 1-based
-							if (matchPoint.Line == ClrTag.LineNumber + 1)
+							if (!replacementMade)
 							{
-								var replacementMade = await TextDocumentHelper.MakeReplacements(txtDoc, matchPoint, find, replace);
-
-								if (!replacementMade)
-								{
-									//   TODO: Log any issues to the output pane, not the debug window
-									System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {ClrTag.LineNumber}.");
-								}
+								//   TODO: Log any issues to the output pane, not the debug window
+								System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {ClrTag.LineNumber}.");
 							}
 						}
-
-						dte.UndoContext.Close();
 					}
+
+					dte.UndoContext.Close();
 				}
 			}
 		}
+	}
 
-		public ColorTag ClrTag { get; private set; }
+	public ColorTag ClrTag { get; private set; }
 
-		internal void Update(ColorTag dataTag)
+	internal void Update(ColorTag dataTag)
+	{
+		ClrTag = dataTag;
+		SetBackground();
+	}
+
+	private void SetBackground()
+	{
+		this.Background = new System.Windows.Media.SolidColorBrush(ClrTag.Clr);
+	}
+
+	private static int GetFontSize()
+	{
+		ThreadHelper.ThrowIfNotOnUIThread();
+
+		try
 		{
-			ClrTag = dataTag;
-			SetBackground();
-		}
-
-		private void SetBackground()
-		{
-			this.Background = new System.Windows.Media.SolidColorBrush(ClrTag.Clr);
-		}
-
-		private static int GetFontSize()
-		{
-			ThreadHelper.ThrowIfNotOnUIThread();
-
-			try
+			IVsFontAndColorStorage storage = (IVsFontAndColorStorage)Package.GetGlobalService(typeof(IVsFontAndColorStorage));
+			Guid guid = new("A27B4E24-A735-4d1d-B8E7-9716E1E3D8E0");
+			if (storage != null && storage.OpenCategory(ref guid, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) == VSConstants.S_OK)
 			{
-				IVsFontAndColorStorage storage = (IVsFontAndColorStorage)Package.GetGlobalService(typeof(IVsFontAndColorStorage));
-				Guid guid = new("A27B4E24-A735-4d1d-B8E7-9716E1E3D8E0");
-				if (storage != null && storage.OpenCategory(ref guid, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) == VSConstants.S_OK)
-				{
-					LOGFONTW[] Fnt = new LOGFONTW[] { new() };
-					FontInfo[] Info = new FontInfo[] { new() };
-					storage.GetFont(Fnt, Info);
-					return Info[0].wPointSize;
-				}
-
+				LOGFONTW[] Fnt = new LOGFONTW[] { new() };
+				FontInfo[] Info = new FontInfo[] { new() };
+				storage.GetFont(Fnt, Info);
+				return Info[0].wPointSize;
 			}
-			catch { }
 
-			return 12;
 		}
+		catch { }
+
+		return 12;
 	}
 }
