@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using CsInlineColorViz;
 
 namespace CSInlineColorViz.Tests;
@@ -17,6 +16,7 @@ public class TaggerTestHelper
 		yield return [ColorRgbaTagger.regularExpression];
 		yield return [ColorRgbTagger.regularExpression];
 		yield return [ColorTagger.regularExpression];
+		yield return [FunColorTagger.regularExpression];
 		yield return [HexIntTagger.regularExpression];
 		yield return [HexStringTagger.regularExpression];
 		yield return [MauiProjTagger.regularExpression];
