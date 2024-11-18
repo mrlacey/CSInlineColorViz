@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using static Microsoft.VisualStudio.VSConstants;
@@ -27,6 +30,41 @@ public sealed class CsInlineColorVizPackage : AsyncPackage
 		await SponsorRequestHelper.CheckIfNeedToShowAsync();
 
 		await base.InitializeAsync(cancellationToken, progress);
+
+		await TrackBasicUsageAnalyticsAsync();
+	}
+
+	private static async Task TrackBasicUsageAnalyticsAsync()
+	{
+#if !DEBUG
+		try
+		{
+			if (string.IsNullOrWhiteSpace(AnalyticsConfig.TelemetryConnectionString))
+			{
+				return;
+			}
+
+			var config = new TelemetryConfiguration
+			{
+				ConnectionString = AnalyticsConfig.TelemetryConnectionString,
+			};
+
+			var client = new TelemetryClient(config);
+
+			var properties = new Dictionary<string, string>
+				{
+					{ "VsixVersion", Vsix.Version },
+					{ "VsVersion", Microsoft.VisualStudio.Telemetry.TelemetryService.DefaultSession?.GetSharedProperty("VS.Core.ExeVersion") },
+				};
+
+			client.TrackEvent(Vsix.Name, properties);
+		}
+		catch (Exception exc)
+		{
+			System.Diagnostics.Debug.WriteLine(exc);
+			await OutputPane.Instance.WriteAsync("Error tracking usage analytics: " + exc.Message);
+		}
+#endif
 	}
 
 	internal static async Task EnsureInstanceLoadedAsync()
