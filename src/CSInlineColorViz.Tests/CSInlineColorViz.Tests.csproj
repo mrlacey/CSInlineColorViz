@@ -56,11 +56,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.ServiceHub.Framework">
+      <Version>4.7.36</Version>
+    </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
       <Version>3.6.1</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
       <Version>3.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="MSTest.Analyzers">
+      <Version>3.6.1</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="WarnAboutTODOs">
       <Version>1.6.0</Version>

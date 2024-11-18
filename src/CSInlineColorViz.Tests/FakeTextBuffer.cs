@@ -63,6 +63,7 @@ public class FakeTextBuffer : ITextBuffer
 		}
 	}
 
+#pragma warning disable CS0067 // events never used
 	public event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
 	public event EventHandler PostChanged;
 	public event EventHandler<SnapshotSpanEventArgs> ReadOnlyRegionsChanged;
@@ -70,6 +71,7 @@ public class FakeTextBuffer : ITextBuffer
 	public event EventHandler<TextContentChangingEventArgs> Changing;
 	public event EventHandler<TextContentChangedEventArgs> ChangedLowPriority;
 	public event EventHandler<TextContentChangedEventArgs> ChangedHighPriority;
+#pragma warning restore CS0067
 
 	public IContentType ContentType { get; }
 	public ITextSnapshot CurrentSnapshot { get; }

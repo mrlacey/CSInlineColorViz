@@ -36,9 +36,9 @@ public sealed class CsInlineColorVizPackage : AsyncPackage
 
 	private static async Task TrackBasicUsageAnalyticsAsync()
 	{
-#if !DEBUG
 		try
 		{
+#if !DEBUG
 			if (string.IsNullOrWhiteSpace(AnalyticsConfig.TelemetryConnectionString))
 			{
 				return;
@@ -58,13 +58,13 @@ public sealed class CsInlineColorVizPackage : AsyncPackage
 				};
 
 			client.TrackEvent(Vsix.Name, properties);
+#endif
 		}
 		catch (Exception exc)
 		{
 			System.Diagnostics.Debug.WriteLine(exc);
 			await OutputPane.Instance.WriteAsync("Error tracking usage analytics: " + exc.Message);
 		}
-#endif
 	}
 
 	internal static async Task EnsureInstanceLoadedAsync()
