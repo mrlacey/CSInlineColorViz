@@ -2,12 +2,13 @@
 using System.Text.RegularExpressions;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
+using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
 internal sealed class UnityTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 {
-	internal static Regex regularExpression = new Regex("(<Color=#)([0-9A-F]{3,8})(>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+	internal static Regex regularExpression = new("(<Color=#)([0-9A-F]{3,8})(>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 	public Regex ColorExpression => regularExpression;
 

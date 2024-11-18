@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
@@ -9,7 +10,7 @@ class SystemColorsDialog : ColorSelectionDialog
 	{
 		var sp = new StackPanel();
 
-		foreach (var color in ColorHelper.SystemColorsAlphabetically())
+		foreach (var color in ColorListHelper.SystemColorsAlphabetically())
 		{
 			if (ColorHelper.TryGetColor(color.Name, out System.Windows.Media.Color clr))
 			{

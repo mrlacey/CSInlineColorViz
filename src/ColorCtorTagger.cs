@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
+using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
