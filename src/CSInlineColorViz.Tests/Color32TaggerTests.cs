@@ -46,7 +46,7 @@ public class Color32TaggerTests : BaseTaggerTests
 		Assert.IsNotNull(tag);
 	}
 
-	// Not yet supported. Can be added later if people really write code like thi.
+	// Not yet supported. Can be added later if people really write code like this.
 	//[TestMethod]
 	//public void CanMatchSingleColor_SpacesBeforeCommas()
 	//{
