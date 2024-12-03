@@ -8,7 +8,7 @@ namespace CsInlineColorViz;
 
 internal sealed class ColorArgbTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 {
-	internal static Regex regularExpression = new(@"(System.Drawing.Color.FromArgb\(|Color.FromArgb\()([0-9, ]{1,}|[0-9, ]{2,}Color.[a-zA-Z]{3,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+	internal static Regex regularExpression = new(@"(System.Drawing.Color.FromArgb\(|Windows.UI.Color.FromArgb\(|Color.FromArgb\()([0-9, ]{1,}|[0-9, ]{2,}Color.[a-zA-Z]{3,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 	public Regex ColorExpression => regularExpression;
 
