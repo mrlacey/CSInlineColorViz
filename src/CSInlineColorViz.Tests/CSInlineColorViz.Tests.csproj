@@ -59,13 +59,13 @@
       <Version>4.7.36</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>3.6.1</Version>
+      <Version>3.6.4</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>3.6.1</Version>
+      <Version>3.6.4</Version>
     </PackageReference>
     <PackageReference Include="MSTest.Analyzers">
-      <Version>3.6.1</Version>
+      <Version>3.6.4</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
