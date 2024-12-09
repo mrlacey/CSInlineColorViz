@@ -22,10 +22,30 @@ public class UnityTaggerTests : BaseTaggerTests
 
 		Assert.AreEqual(1, matches.Count());
 
-		// TODO: add support for line number, line start, and span start
 		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
 
 		Assert.IsNotNull(tag);
+	}
+
+	[TestMethod]
+	public void CanMatchSingleColor_3HexChars_CheckGeneratedTagValues()
+	{
+		var sut = new UnityTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<Color=#FF0>";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		// TODO: add checks for line number, line start, and span start
+		var tag = sut.TryCreateTagForMatch(matches.First(), 1, 2, 3, lineWithColor);
+
+		Assert.IsNotNull(tag);
+		Assert.AreEqual(tag.LineNumber, 1);
+		Assert.AreEqual(tag.LineCharOffset, 2);
 	}
 
 	[TestMethod]
