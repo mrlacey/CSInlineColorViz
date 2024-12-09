@@ -73,6 +73,7 @@
     <Compile Include="ColorTaggerProvider.cs" />
     <Compile Include="ConsoleColorDialog.cs" />
     <Compile Include="CsInlineColorVizPackage.cs" />
+    <Compile Include="FunColorsDialog.cs" />
     <Compile Include="FunColorTagger.cs" />
     <Compile Include="FunColorTaggerProvider.cs" />
     <Compile Include="InternalSettings.cs" />

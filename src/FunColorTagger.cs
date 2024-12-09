@@ -8,7 +8,9 @@ namespace CsInlineColorViz;
 
 internal sealed class FunColorTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 {
-	internal static Regex regularExpression = new(@"(FunColors.FunColor.|FunColor.)([a-z,A-Z0-9]{5,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+	// Note this contains an empty group, so that the output groups match ColorTagger,
+	// as the adornment expects values in specific groups when making changes with the dialog
+	internal static Regex regularExpression = new(@"(FunColors.FunColor.|FunColor.)()([a-z,A-Z0-9]{5,})", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 	public Regex ColorExpression => regularExpression;
 
@@ -19,9 +21,9 @@ internal sealed class FunColorTagger : RegexTagger<ColorTag>, ITestableRegexColo
 
 	internal override ColorTag TryCreateTagForMatch(Match match, int lineNumber, int lineStart, int spanStart, string lineText)
 	{
-		if (lineText.Contains(match.Value) && match.Groups.Count == 3)
+		if (lineText.Contains(match.Value) && match.Groups.Count == 4)
 		{
-			var value = match.Groups[2].Value;
+			var value = match.Groups[3].Value;
 			var precedingChar = match.Index > 0 ? lineText[match.Index - 1] : ' ';
 
 			// Do this check here rather than as part of the RegEx so don't have to adjust the insertion point for the adornment
@@ -29,7 +31,7 @@ internal sealed class FunColorTagger : RegexTagger<ColorTag>, ITestableRegexColo
 			{
 				if (ColorHelper.TryGetColor(value, out Color clr))
 				{
-					return new ColorTag(clr, match, lineNumber, lineStart, PopupType.None);
+					return new ColorTag(clr, match, lineNumber, lineStart, PopupType.FunColors);
 				}
 				else
 				{

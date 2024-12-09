@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
+using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
@@ -47,7 +48,7 @@ public static class ColorListHelper
 
 	// TODO: might be nice to add a test that this produces the same as
 	// Enum.GetValues(typeof(System.ConsoleColor)).Cast<object>().ToList().OrderBy(o => o.ToString()).Select(o => o.ToString())
-	// In theory hardcoding this list save work at runtime.
+	// [In theory] hardcoding this list to save work at runtime.
 	public static IEnumerable<string> ConsoleColorsNamesAlphabetical()
 	{
 		yield return nameof(System.ConsoleColor.Black);
@@ -352,5 +353,45 @@ public static class ColorListHelper
 		yield return System.Drawing.Color.DarkSlateGray;
 		yield return System.Drawing.Color.Black;
 		yield return System.Drawing.Color.Transparent;
+	}
+
+	// This was created from : https://github.com/maddymontaquila/funcolors/blob/main/FunColor.cs
+	// Last updated 9-dec-2024 (5b11965)
+	public static IEnumerable<(string Name, Color Color)> FunColors()
+	{
+		yield return ("DotNetPurple2024", (Color)ColorConverter.ConvertFromString("#FF512BD4"));
+		yield return ("XamarinBlue2011", (Color)ColorConverter.ConvertFromString("#FF5596D8"));
+		yield return ("AndroidBotGreen2024", (Color)ColorConverter.ConvertFromString("#FFA7CD45"));
+		yield return ("RubberDuckYellow", (Color)ColorConverter.ConvertFromString("#FFFFD700"));
+		yield return ("GameBoyGreen", (Color)ColorConverter.ConvertFromString("#FF9BBC0F"));
+		yield return ("BarbiePink", (Color)ColorConverter.ConvertFromString("#FFDA1884"));
+		yield return ("PotatoHeadBrown", (Color)ColorConverter.ConvertFromString("#FF8B4513"));
+		yield return ("TickleMeElmoRed", (Color)ColorConverter.ConvertFromString("#FFFF3F3F"));
+		yield return ("LegoRed", (Color)ColorConverter.ConvertFromString("#FFB40000"));
+		yield return ("HotWheelsBlue", (Color)ColorConverter.ConvertFromString("#FF005BAC"));
+		yield return ("NerfOrange", (Color)ColorConverter.ConvertFromString("#FFFF6F00"));
+		yield return ("PlayDohYellow", (Color)ColorConverter.ConvertFromString("#FFFBE870"));
+		yield return ("MyLittlePonyPurple", (Color)ColorConverter.ConvertFromString("#FFDDA0DD"));
+		yield return ("TransformersSilver", (Color)ColorConverter.ConvertFromString("#FFC0C0C0"));
+		yield return ("GIJoeGreen", (Color)ColorConverter.ConvertFromString("#FF4B5320"));
+		yield return ("PowerRangersRed", (Color)ColorConverter.ConvertFromString("#FFFF0000"));
+		yield return ("TeenageMutantNinjaTurtlesGreen", (Color)ColorConverter.ConvertFromString("#FF008000"));
+		yield return ("CareBearsRainbow", (Color)ColorConverter.ConvertFromString("#FFFF69B4"));
+		yield return ("AppleIIBeige", (Color)ColorConverter.ConvertFromString("#FFD3D3D3"));
+		yield return ("Commodore64Brown", (Color)ColorConverter.ConvertFromString("#FF6C4F3D"));
+		yield return ("Atari800Blue", (Color)ColorConverter.ConvertFromString("#FF0057A0"));
+		yield return ("IBMPCGray", (Color)ColorConverter.ConvertFromString("#FF808080"));
+		yield return ("TRS80Silver", (Color)ColorConverter.ConvertFromString("#FFC0C0C0"));
+		yield return ("ZXSpectrumBlack", (Color)ColorConverter.ConvertFromString("#FF000000"));
+		yield return ("AmigaWhite", (Color)ColorConverter.ConvertFromString("#FFFFFFFF"));
+		yield return ("MSXBlue", (Color)ColorConverter.ConvertFromString("#FF0000FF"));
+		yield return ("BratSummer", (Color)ColorConverter.ConvertFromString("#FF8ACE00"));
+		yield return ("BratAutumn", (Color)ColorConverter.ConvertFromString("#FFFF8C00"));
+		yield return ("NeonElectricBlue", (Color)ColorConverter.ConvertFromString("#FF154FEE"));
+		yield return ("NeonVividMagenta", (Color)ColorConverter.ConvertFromString("#FFFF08FC"));
+		yield return ("PukePink", (Color)ColorConverter.ConvertFromString("#FFFF3AC6"));
+		yield return ("MushyPeas", (Color)ColorConverter.ConvertFromString("#FF5FA41C"));
+		yield return ("PainfulRed", (Color)ColorConverter.ConvertFromString("#FFFF1A00"));
+		yield return ("ShrekGreen", (Color)ColorConverter.ConvertFromString("#FF009B00"));
 	}
 }
