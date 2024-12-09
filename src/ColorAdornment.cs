@@ -46,12 +46,6 @@ internal sealed class ColorAdornment : Border
 	private async void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
 #pragma warning restore VSTHRD100 // Avoid async void methods
 	{
-		// TODO: Enable dialog support
-		return;
-
-		// TODO: for preview releases only make this available to sponsors
-		//if (await SponsorDetector.IsSponsorAsync())
-
 		if (e.ClickCount == 2 && ClrTag.PopupType != PopupType.None)
 		{
 			var dlg = CreateDialogForPopupType(ClrTag.PopupType);
@@ -87,8 +81,8 @@ internal sealed class ColorAdornment : Border
 
 							if (!replacementMade)
 							{
-								//   TODO: Log any issues to the output pane, not the debug window
 								System.Diagnostics.Debug.WriteLine($"Failed to find '{find}' on line {ClrTag.LineNumber}.");
+								await OutputPane.Instance.WriteAsync($"Failed to find '{find}' on line {ClrTag.LineNumber}.");
 							}
 						}
 					}
