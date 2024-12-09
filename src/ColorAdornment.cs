@@ -65,6 +65,14 @@ internal sealed class ColorAdornment : Border
 				{
 					var find = ClrTag.Match.Groups[0].Value;
 					var replace = $"{ClrTag.Match.Groups[1].Value}{ClrTag.Match.Groups[2].Value}{dlg.SelectedName}";
+
+					// System.Windows.Colors end with the suffix, but System.Drawing.Colors do not
+					// The dialog doesn't include the suffix so add it if needed
+					if (find.EndsWith("Color") && !replace.EndsWith("Color"))
+					{
+						replace += "Color";
+					}
+
 					var matches = await TextDocumentHelper.FindMatches(txtDoc, find);
 
 					if (!dte.UndoContext.IsOpen)

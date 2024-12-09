@@ -3,7 +3,6 @@ using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
-// TODO: if the value returned from here is replacing a string that ends with "Color", this needs to be appended on the replacement too.
 class SystemColorsDialog : ColorSelectionDialog
 {
 	public SystemColorsDialog() : base()
