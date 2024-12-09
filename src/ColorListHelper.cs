@@ -9,7 +9,7 @@ namespace CsInlineColorViz;
 public static class ColorListHelper
 {
 	// Note that SystemColors are KnownColors
-	// Also note that System.Windows.SystemColors are the same as Systmem.Drawing.SystemColors, but with "Color" on the end
+	// Also note that System.Windows.SystemColors are the same as System.Drawing.SystemColors, but with "Color" on the end
 	public static IEnumerable<System.Drawing.Color> SystemColorsAlphabetically()
 	{
 		yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.ActiveBorder);
@@ -46,8 +46,6 @@ public static class ColorListHelper
 		yield return System.Drawing.Color.FromKnownColor(System.Drawing.KnownColor.WindowText);
 	}
 
-	// TODO: might be nice to add a test that this produces the same as
-	// Enum.GetValues(typeof(System.ConsoleColor)).Cast<object>().ToList().OrderBy(o => o.ToString()).Select(o => o.ToString())
 	// [In theory] hardcoding this list to save work at runtime.
 	public static IEnumerable<string> ConsoleColorsNamesAlphabetical()
 	{

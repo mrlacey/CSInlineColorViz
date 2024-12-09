@@ -47,6 +47,7 @@
     <Compile Include="BaseTaggerTests.cs" />
     <Compile Include="ColorCtorTaggerTests.cs" />
     <Compile Include="ColorFromArgbTaggerTests.cs" />
+    <Compile Include="ColorListHelperTests.cs" />
     <Compile Include="FakeTextBuffer.cs" />
     <Compile Include="Color32TaggerTests.cs" />
     <Compile Include="FunColorTaggerTests.cs" />
