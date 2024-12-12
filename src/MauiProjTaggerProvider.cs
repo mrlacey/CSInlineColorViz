@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace CsInlineColorViz;
 
-// This works for any XML file but the inteded application is within .csproj files (for .NET MAUI apps)
+// This works for any XML file but the intended application is within .csproj files (for .NET MAUI apps)
 [Export(typeof(ITaggerProvider))]
 [ContentType("XML")]
 [TagType(typeof(ColorTag))]
