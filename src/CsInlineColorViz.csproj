@@ -99,6 +99,8 @@
     </Compile>
     <Compile Include="SponsorDetector.cs" />
     <Compile Include="SponsorRequestHelper.cs" />
+    <Compile Include="SvgTagger.cs" />
+    <Compile Include="SvgTaggerProvider.cs" />
     <Compile Include="SystemColorsDialog.cs" />
     <Compile Include="TextDocumentHelper.cs" />
     <Compile Include="UnityTagger.cs" />

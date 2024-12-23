@@ -51,6 +51,7 @@
     <Compile Include="FakeTextBuffer.cs" />
     <Compile Include="Color32TaggerTests.cs" />
     <Compile Include="FunColorTaggerTests.cs" />
+    <Compile Include="SvgTaggerTests.cs" />
     <Compile Include="TaggerTestHelper.cs" />
     <Compile Include="UnityTaggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
