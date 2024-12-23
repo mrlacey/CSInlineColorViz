@@ -11,7 +11,7 @@ namespace CsInlineColorViz
         public const string Name = "C# Inline Color Vizualizer";
         public const string Description = @"See samples of the colors you use within your C# code.  ";
         public const string Language = "en-US";
-        public const string Version = "1.18.1";
+        public const string Version = "1.19";
         public const string Author = "Matt Lacey";
         public const string Tags = "";
     }
