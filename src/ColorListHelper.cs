@@ -67,6 +67,32 @@ public static class ColorListHelper
 		yield return nameof(System.ConsoleColor.Yellow);
 	}
 
+	public static IEnumerable<string> UnityColorsAlphabetical()
+	{
+		yield return nameof(System.Drawing.Color.Aqua);
+		yield return nameof(System.Drawing.Color.Black);
+		yield return nameof(System.Drawing.Color.Blue);
+		yield return nameof(System.Drawing.Color.Brown);
+		yield return nameof(System.Drawing.Color.Cyan);
+		yield return nameof(System.Drawing.Color.DarkBlue);
+		yield return nameof(System.Drawing.Color.Fuchsia);
+		yield return nameof(System.Drawing.Color.Green);
+		yield return nameof(System.Drawing.Color.Gray);
+		yield return nameof(System.Drawing.Color.LightBlue);
+		yield return nameof(System.Drawing.Color.Lime);
+		yield return nameof(System.Drawing.Color.Magenta);
+		yield return nameof(System.Drawing.Color.Maroon);
+		yield return nameof(System.Drawing.Color.Navy);
+		yield return nameof(System.Drawing.Color.Olive);
+		yield return nameof(System.Drawing.Color.Orange);
+		yield return nameof(System.Drawing.Color.Purple);
+		yield return nameof(System.Drawing.Color.Red);
+		yield return nameof(System.Drawing.Color.Silver);
+		yield return nameof(System.Drawing.Color.Teal);
+		yield return nameof(System.Drawing.Color.White);
+		yield return nameof(System.Drawing.Color.Yellow);
+	}
+
 	public static IEnumerable<System.Drawing.Color> SystemDrawingColorsAlphabetical()
 	{
 		yield return System.Drawing.Color.AliceBlue;

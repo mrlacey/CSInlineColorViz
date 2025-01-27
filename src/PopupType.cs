@@ -8,6 +8,7 @@ public enum PopupType
 	KnownColors,
 	SystemColors,
 	FunColors,
+	UnityColors,
 	// RGB
 	// RGBA?
 	// HSLA?
