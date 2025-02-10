@@ -67,6 +67,7 @@ public static class ColorListHelper
 		yield return nameof(System.ConsoleColor.Yellow);
 	}
 
+	// https://docs.unity3d.com/Packages/com.unity.ugui@1.0/manual/StyledText.html#supported-colors
 	public static IEnumerable<string> UnityColorsAlphabetical()
 	{
 		yield return nameof(System.Drawing.Color.Aqua);
