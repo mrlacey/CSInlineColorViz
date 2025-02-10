@@ -7,7 +7,7 @@ namespace CsInlineColorViz;
 
 internal sealed class UnityTextTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 {
-	internal static Regex regularExpression = new("(<Color)(=)([a-z]{3,})(?=>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+	internal static Regex regularExpression = new(@"(<Color=)([\\]{0,1}[""]{0,1})([a-z]{3,})(?=[\\]{0,1}[""]{0,1}>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 	public Regex ColorExpression => regularExpression;
 
