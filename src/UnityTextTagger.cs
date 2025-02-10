@@ -1,18 +1,17 @@
-﻿using System.Reflection.Metadata;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
 using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
-internal sealed class UnityTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
+internal sealed class UnityTextTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 {
-	internal static Regex regularExpression = new("(<Color=#)([0-9A-F]{3,8})(>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+	internal static Regex regularExpression = new(@"(<Color=)([\\]{0,1}[""]{0,1})([a-z]{3,})(?=[\\]{0,1}[""]{0,1}>)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
 	public Regex ColorExpression => regularExpression;
 
-	public UnityTagger(ITextBuffer buffer)
+	public UnityTextTagger(ITextBuffer buffer)
 		: base(buffer, [regularExpression])
 	{
 	}
@@ -21,11 +20,11 @@ internal sealed class UnityTagger : RegexTagger<ColorTag>, ITestableRegexColorTa
 	{
 		if (lineText.Contains(match.Value) && match.Groups.Count == 4)
 		{
-			var value = match.Groups[2].Value;
+			var value = match.Groups[3].Value;
 
-			if (ColorHelper.TryGetHexColor($"#{value}", out Color clr))
+			if (ColorHelper.TryGetColor($"{value}", out Color clr))
 			{
-				return new ColorTag(clr, match, lineNumber, lineStart, PopupType.None);
+				return new ColorTag(clr, match, lineNumber, lineStart, PopupType.UnityColors);
 			}
 			else
 			{

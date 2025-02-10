@@ -10,6 +10,98 @@ namespace CSInlineColorViz.Tests;
 public class UnityTaggerTests : BaseTaggerTests
 {
 	[TestMethod]
+	public void CanMatchSingleColor_Name()
+	{
+		var sut = new UnityTextTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<Color=yellow>";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
+
+		Assert.IsNotNull(tag);
+	}
+
+	[TestMethod]
+	public void CanMatchSingleColor_Name_TagLowercase()
+	{
+		var sut = new UnityTextTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<color=green>";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
+
+		Assert.IsNotNull(tag);
+	}
+
+	[TestMethod]
+	public void CanMatchSingleColor_Name_InQuotes()
+	{
+		var sut = new UnityTextTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<Color=\"fuchsia\">";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
+
+		Assert.IsNotNull(tag);
+	}
+
+	[TestMethod]
+	public void CanMatchSingleColor_Name_InEscapedQuotes()
+	{
+		var sut = new UnityTextTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<Color=\\\"lime\\\">";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
+
+		Assert.IsNotNull(tag);
+	}
+
+	[TestMethod]
+	public void CanMatchSingleColor_Name_CheckGeneratedTagValues()
+	{
+		var sut = new UnityTextTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<Color=yellow>";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		var tag = sut.TryCreateTagForMatch(matches.First(), 1, 2, 3, lineWithColor);
+
+		Assert.IsNotNull(tag);
+		Assert.AreEqual(1, tag.LineNumber);
+		Assert.AreEqual(2, tag.LineCharOffset);
+	}
+
+	[TestMethod]
 	public void CanMatchSingleColor_3HexChars()
 	{
 		var sut = new UnityTagger(new FakeTextBuffer());
@@ -40,12 +132,11 @@ public class UnityTaggerTests : BaseTaggerTests
 
 		Assert.AreEqual(1, matches.Count());
 
-		// TODO: add checks for line number, line start, and span start
 		var tag = sut.TryCreateTagForMatch(matches.First(), 1, 2, 3, lineWithColor);
 
 		Assert.IsNotNull(tag);
-		Assert.AreEqual(tag.LineNumber, 1);
-		Assert.AreEqual(tag.LineCharOffset, 2);
+		Assert.AreEqual(1, tag.LineNumber);
+		Assert.AreEqual(2, tag.LineCharOffset);
 	}
 
 	[TestMethod]

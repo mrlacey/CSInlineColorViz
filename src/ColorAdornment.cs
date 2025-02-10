@@ -40,6 +40,7 @@ internal sealed class ColorAdornment : Border
 			PopupType.KnownColors => new KnownColorDialog(),
 			PopupType.SystemColors => new SystemColorsDialog(),
 			PopupType.FunColors => new FunColorsDialog(),
+			PopupType.UnityColors => new UnityColorsDialog(),
 			_ => throw new NotImplementedException(),
 		};
 
