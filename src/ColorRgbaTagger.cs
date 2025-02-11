@@ -6,7 +6,6 @@ using WpfColorHelper;
 
 namespace CsInlineColorViz;
 
-// TODO: might be good to combine this with ColorRgbTagger
 internal sealed class ColorRgbaTagger : RegexTagger<ColorTag>, ITestableRegexColorTagger
 {
 	internal static Regex regularExpression = new(@"(Color.FromRgba\()([0-9, ]{7,})(\))", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);

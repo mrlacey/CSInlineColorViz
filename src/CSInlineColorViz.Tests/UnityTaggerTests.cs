@@ -82,6 +82,24 @@ public class UnityTaggerTests : BaseTaggerTests
 	}
 
 	[TestMethod]
+	public void CanMatchSingleColor_Name_InDoubleQuotes()
+	{
+		var sut = new UnityTextTagger(new FakeTextBuffer());
+
+		Assert.IsNotNull(sut);
+
+		var lineWithColor = "<Color=\"\"Purple\"\">";
+
+		var matches = sut.ColorExpression.Matches(lineWithColor).Cast<Match>();
+
+		Assert.AreEqual(1, matches.Count());
+
+		var tag = sut.TryCreateTagForMatch(matches.First(), 0, 0, 0, lineWithColor);
+
+		Assert.IsNotNull(tag);
+	}
+
+	[TestMethod]
 	public void CanMatchSingleColor_Name_CheckGeneratedTagValues()
 	{
 		var sut = new UnityTextTagger(new FakeTextBuffer());
