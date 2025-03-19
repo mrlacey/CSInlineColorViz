@@ -27,6 +27,9 @@ public sealed class CsInlineColorVizPackage : AsyncPackage
 
 		await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
+		await OutputPane.Instance.WriteAsync(Vsix.Name);
+		await OutputPane.Instance.WriteAsync(Vsix.Version);
+
 		await SponsorRequestHelper.CheckIfNeedToShowAsync();
 
 		await base.InitializeAsync(cancellationToken, progress);
