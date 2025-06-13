@@ -7,6 +7,7 @@ public class TaggerTestHelper
 {
 	public static IEnumerable<object[]> AllTaggerRegexs()
 	{
+		yield return [Color32Tagger.regularExpression];
 		yield return [ColorArgbTagger.regularExpression];
 		yield return [ColorCtorTagger.regularExpression];
 		yield return [ColorFromIntTagger.regularExpression];
@@ -20,6 +21,8 @@ public class TaggerTestHelper
 		yield return [HexIntTagger.regularExpression];
 		yield return [HexStringTagger.regularExpression];
 		yield return [MauiProjTagger.regularExpression];
+		yield return [SvgTagger.regularExpression];
 		yield return [UnityTagger.regularExpression];
+		yield return [UnityTextTagger.regularExpression];
 	}
 }
