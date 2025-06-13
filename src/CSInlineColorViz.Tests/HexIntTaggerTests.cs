@@ -9,7 +9,7 @@ namespace CSInlineColorViz.Tests;
 public class HexIntTaggerTests : BaseTaggerTests
 {
 	[TestMethod]
-	public void CanMatch_Attribute_ThreeChar()
+	public void CanMatch_WhiteSpaceAround_ThreeChar()
 	{
 		var testLine = " 0x123 ";
 
@@ -17,7 +17,7 @@ public class HexIntTaggerTests : BaseTaggerTests
 	}
 
 	[TestMethod]
-	public void CanMatch_Attribute_SixChar()
+	public void CanMatch_WhiteSpaceAround_SixChar()
 	{
 		var testLine = " 0x123456 ";
 
@@ -25,9 +25,33 @@ public class HexIntTaggerTests : BaseTaggerTests
 	}
 
 	[TestMethod]
-	public void CanMatch_Attribute_EightChar()
+	public void CanMatch_WhiteSpaceAround_EightChar()
 	{
 		var testLine = " 0x12345678 ";
+
+		CreatesOneMatchAndTag(testLine);
+	}
+
+	[TestMethod]
+	public void CanMatch_QuotesAround_ThreeChar()
+	{
+		var testLine = " \"0x123\" ";
+
+		CreatesOneMatchAndTag(testLine);
+	}
+
+	[TestMethod]
+	public void CanMatch_QuotesAround_SixChar()
+	{
+		var testLine = " \"0x123456\" ";
+
+		CreatesOneMatchAndTag(testLine);
+	}
+
+	[TestMethod]
+	public void CanMatch_QuotesAround_EightChar()
+	{
+		var testLine = " \"0x12345678\" ";
 
 		CreatesOneMatchAndTag(testLine);
 	}
